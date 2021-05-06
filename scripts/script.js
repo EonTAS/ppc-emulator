@@ -26,19 +26,17 @@ class Bitfield {
     getSubField(start, size) {
         return new Bitfield(this.getValue(start, size), size)
     }
-    split(splits) {
-        let returnSplits = []
+    split(splits, names) {
+        let returnSplits = {}
         let prevSplit
         for(let i = 0; i < splits.length; i++) {
             let split = splits[i]
             if(prevSplit != undefined) {
-                console.log(prevSplit + " " + (split - prevSplit))
-                returnSplits.push(this.getSubField(prevSplit, split-prevSplit))
+                returnSplits[names[i-1]] = this.getSubField(prevSplit, split-prevSplit)
             }
             prevSplit = split
         }
-        console.log(prevSplit + " " + (this.size - prevSplit))
-        returnSplits.push(this.getSubField(prevSplit, this.size-prevSplit))
+        returnSplits[names[names.length-1]] = this.getSubField(prevSplit, this.size-prevSplit)
         return returnSplits
     }
     getBit(i) {
@@ -104,7 +102,7 @@ class Computer {
         this.programCounter = 0
         this.count = 0
         while (this.programCounter < program.length*4) {
-            console.log("PC = " + this.programCounter)
+            console.log("PC = 0x" + this.programCounter.toString(16))
             let instruction = new Bitfield(this.memory.getWord(this.programCounter), 32)
             this.step(instruction)
             if(this.count++ > maxLoop) {
@@ -116,13 +114,66 @@ class Computer {
     step(instruction) {
         console.log("   current instruction : " + instruction.getFullValue().toString(16))
         let opcode = instruction.getValue(0,6)
+        console.log("   " + opcode)
         let CIA = this.programCounter //current instruction address
         let NIA = CIA + 0x4 //next instruction address
         let args;
         switch(opcode) {
+            case 31: {//add
+                console.log("   add")
+                args = instruction.split([6,11,16,21,22,31], ["D", "A", "B", "OE", "type", "Rc"])
+                var type = args["type"].getFullValue()
+                if (type == 266) { //add
+
+                    this.gpr[args["D"].getFullValue()] = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()];
+                    if(args["Rc"].getFullValue()) {
+                        //CR0 : LT GT EQ SO
+                    } 
+                    if(args["OE"].getFullValue()) {
+                        //XER : SO, OV
+                    } 
+                    
+                } else if (type == 10) { //addc
+
+                    this.gpr[args["D"].getFullValue()] = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()];
+                    if(args["Rc"].getFullValue()) {
+                        //CR0 : LT GT EQ SO
+                    } 
+                    if(args["OE"].getValue()) {
+                        //CA
+                        //XER : SO, OV
+                    } 
+                    
+                } else if (type == 138) { //add extended
+
+                    this.gpr[args["D"].getFullValue()] = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()] //+XER[CA];
+                    if(args["Rc"].getFullValue()) {
+                        //CR0 : LT GT EQ SO
+                    } 
+                    if(args["OE"].getFullValue()) {
+                        //CA
+                        //XER : SO, OV
+                    } 
+                    
+                }
+                break
+            }
+            case 14: { //addi
+                args = instruction.split([6,11,16], ["D", "A", "SIMM"])
+                let A = args["A"].getFullValue()
+                let D = args["D"].getFullValue()
+                let SIMM = EXTS(args["SIMM"].getFullValue(), 16)
+                if (A == 0) {
+                    this.gpr[D] = SIMM
+                }
+                else {
+                    this.gpr[D] = this.gpr[A] + SIMM
+                }
+                break
+            }
             case 18: {//branch 
                 console.log("   branch")
-                args = this.getArgs(instruction, "I")
+                args = instruction.split([6,30,31], ["LI", "AA", "LK"])
                 if (args["AA"].getFullValue()) {
                     NIA = EXTS((args["LI"].getFullValue())<<2,24)
                 } else {
@@ -137,7 +188,7 @@ class Computer {
             }
             case 16: {//branch conditional
                 console.log("   branch conditional")
-                args = this.getArgs(instruction, "B")
+                args = instruction.split([6,11,16,30,31], ["BO", "BI", "BD", "AA", "LK"])
                 if (!args["BO"].getBit(2)) {
                     this.ctr = this.ctr-1
                 }
@@ -159,9 +210,11 @@ class Computer {
                 break
             }
             case 19: { //branch conditional to count register
+                
+                args = instruction.split([6,11,16,21, 30,31], ["BO", "BI", "0", "type", "LK"])
                 let cond_ok = (args["BO"].getBit(0)) | (this.CR.getBit(args["BI"].getFullValue()) == args["BO"].getBit(1))
                 if (cond_ok) {
-                    let type = args["BD"].getValue(5,10)
+                    let type = args["type"].getFullValue()
                     if (type == 528){
                         NIA = this.ctr<<2
                     } else if (type == 16) {
