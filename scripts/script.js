@@ -80,6 +80,8 @@ class Memory {
         return this.contents[addr]
     }
 }
+
+//https://fail0verflow.com/media/files/ppc_750cl.pdf following this spec for each command (starts at page 353)
 class Computer {
     constructor(program, maxLoop = 12) {
         this.memory = new Memory(0x10000)
