@@ -39,6 +39,9 @@ class Bitfield {
         returnSplits[names[names.length-1]] = this.getSubField(prevSplit, this.size-prevSplit)
         return returnSplits
     }
+    setBit(i, val) {
+        this.values[i] = val 
+    }
     getBit(i) {
         return this.values[i]
     }
@@ -82,15 +85,41 @@ class Memory {
 }
 
 //https://fail0verflow.com/media/files/ppc_750cl.pdf following this spec for each command (starts at page 353)
+
+// and https://www.nxp.com/docs/en/user-guide/MPCFPE_AD_R1.pdf
 class Computer {
     constructor(program, maxLoop = 12) {
         this.memory = new Memory(0x10000)
-        this.gpr = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        this.programCounter = 0;
+
+        //architecture defined registers excluding SPRs
+        this.CR = [new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4)]
+        //bit 0 = LT = Set when result is negative
+        //bit 1 = GT = set when result is positive and non zero
+        //bit 2 = EQ = set when result is zero
+        //SO = copy of XER[SO] 
+
+
+        this.FPRs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        this.FPSCR = new Bitfield(0,32)
+        this.GPRs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        
+        //Architecture-Defined SPRs Implemented 
         this.lr = 0
         this.ctr = 0
+        this.DAR = 0
+        this.DSISR = 0
 
-        this.CR = new Bitfield(0, 32)
+        this.XER = (new Bitfield(0,32)).split([0,1,2,3,25],["SO", "OV", "CA", "0", "Byte Count"])
+        //page 73 of second file
+        //SO = summary overflow : set whenever an overflow bit is set, remains set until mtspr or mcrxr instructions occur
+        //OV = Overflow, set to indicate overflow during an instruction. Add subtract and negate set to true if the carry is not equal to result + 1, and clear otherwise.
+        //          multiply low and divide set OV to true if OE  if cant be represented in 32 bits.
+        //CA = Carry bit, set 
+        //Byte Count = used by lswx and stswx to store byte count to use 
+
+
+        this.programCounter = 0;
+        
 
         
         for (let i = 0; i < program.length; i++) {
@@ -127,9 +156,17 @@ class Computer {
                 var type = args["type"].getFullValue()
                 if (type == 266) { //add
 
-                    this.gpr[args["D"].getFullValue()] = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()];
+                    let result = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()];
+                    this.gpr[args["D"].getFullValue()] = result
                     if(args["Rc"].getFullValue()) {
                         //CR0 : LT GT EQ SO
+                        if(result < 0) {
+                            this.CR[0].setValue(0b1000)
+                        } else if (result > 0) {
+                            this.CR[0].setValue(0b0100)
+                        } else {
+                            this.CR[0].setValue(0b0010)
+                        }
                     } 
                     if(args["OE"].getFullValue()) {
                         //XER : SO, OV
@@ -137,9 +174,17 @@ class Computer {
                     
                 } else if (type == 10) { //addc
 
-                    this.gpr[args["D"].getFullValue()] = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()];
+                    let result = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()];
+                    this.gpr[args["D"].getFullValue()] = result
                     if(args["Rc"].getFullValue()) {
                         //CR0 : LT GT EQ SO
+                        if(result < 0) {
+                            this.CR[0].setValue(0b1000)
+                        } else if (result > 0) {
+                            this.CR[0].setValue(0b0100)
+                        } else {
+                            this.CR[0].setValue(0b0010)
+                        }
                     } 
                     if(args["OE"].getValue()) {
                         //CA
@@ -148,9 +193,17 @@ class Computer {
                     
                 } else if (type == 138) { //add extended
 
-                    this.gpr[args["D"].getFullValue()] = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()] //+XER[CA];
+                    let result = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()] //+XER[CA];
+                    this.gpr[args["D"].getFullValue()] = result
                     if(args["Rc"].getFullValue()) {
                         //CR0 : LT GT EQ SO
+                        if(result < 0) {
+                            this.CR[0].setValue(0b1000)
+                        } else if (result > 0) {
+                            this.CR[0].setValue(0b0100)
+                        } else {
+                            this.CR[0].setValue(0b0010)
+                        }
                     } 
                     if(args["OE"].getFullValue()) {
                         //CA
