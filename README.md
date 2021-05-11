@@ -10,8 +10,6 @@ Create a basic power pc assembler emulator that can be used to quick and easy te
 
 3) as a visitor i want to be able to learn a little about how low level operations work. 
 
-
-
 # Features :
 
 1) Memory Start
@@ -80,3 +78,8 @@ Create a basic power pc assembler emulator that can be used to quick and easy te
 
 
 # Credits: 
+
+
+https://fail0verflow.com/media/files/ppc_750cl.pdf following this spec for each command (starts at page 353)
+
+and https://www.nxp.com/docs/en/user-guide/MPCFPE_AD_R1.pdf this to help understand compare register better
