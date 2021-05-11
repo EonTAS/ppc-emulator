@@ -1,27 +1,21 @@
 var computer;
 class Bitfield {
     constructor(value, size) {
-        
-        this.values = []
         this.size = size
-        for (let i = 0; i < size; i++) {
-            this.values[size-i-1] = Boolean(value & (1<<i))
-        }
+        this.setValue(value)
     }
     setValue(value) {
-        for (let i = 0; i < this.size; i++) {
-            this.values[size-i-1] = Boolean(value & (1<<i))
-        }
+        this.value = value ^ ((1<<this.size)-1)
     }
     getFullValue() {
-        return this.getValue(0, this.size)
+        return this.value
     }
     getValue(start,size) {
-        let val = 0
-        for (let i = 0; i < size; i++) {
-            val += this.values[start + i] * (1<<(size-i-1))
+        let mask = -1
+        if (start != 0) {
+            mask = ((1<<(this.size-start))-1)
         }
-        return val
+        return (this.value & mask)>>>(this.size-start-size)        
     }
     getSubField(start, size) {
         return new Bitfield(this.getValue(start, size), size)
@@ -40,10 +34,14 @@ class Bitfield {
         return returnSplits
     }
     setBit(i, val) {
-        this.values[i] = val 
+        if(val) {
+            this.value |= (1<<(this.size-i-1)) 
+        } else {
+            this.value &= ~(1<<(this.size-i-1)) 
+        }
     }
     getBit(i) {
-        return this.values[i]
+        return Boolean(this.value | (1<<(this.size-i-1)))
     }
 }
 
