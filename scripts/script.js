@@ -80,6 +80,10 @@ class Memory {
     getByte(addr) {        
         return this.contents[addr]
     }
+
+    getSize() {
+        return this.size*4
+    }
 }
 
 //https://fail0verflow.com/media/files/ppc_750cl.pdf following this spec for each command (starts at page 353)
@@ -99,7 +103,7 @@ class Computer {
 
         this.FPRs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         this.FPSCR = new Bitfield(0,32)
-        this.GPRs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        this.GPR = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         
         //Architecture-Defined SPRs Implemented 
         this.lr = 0
@@ -124,7 +128,7 @@ class Computer {
             this.memory.setWord(parseInt(program[i], 16), 4*i)
         }
 
-        this.gpr[1] = this.memory.length - 0x10;
+        this.GPR[1] = this.memory.getSize()-0x10;
 
         console.log(this.memory)
 
@@ -154,8 +158,8 @@ class Computer {
                 var type = args["type"].getFullValue()
                 if (type == 266) { //add
 
-                    let result = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()];
-                    this.gpr[args["D"].getFullValue()] = result
+                    let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()];
+                    this.GPR[args["D"].getFullValue()] = result
                     if(args["Rc"].getFullValue()) {
                         //CR0 : LT GT EQ SO
                         if(result < 0) {
@@ -172,8 +176,8 @@ class Computer {
                     
                 } else if (type == 10) { //addc
 
-                    let result = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()];
-                    this.gpr[args["D"].getFullValue()] = result
+                    let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()];
+                    this.GPR[args["D"].getFullValue()] = result
                     if(args["Rc"].getFullValue()) {
                         //CR0 : LT GT EQ SO
                         if(result < 0) {
@@ -191,8 +195,8 @@ class Computer {
                     
                 } else if (type == 138) { //add extended
 
-                    let result = this.gpr[args["A"].getFullValue()] + this.gpr[args["B"].getFullValue()] //+XER[CA];
-                    this.gpr[args["D"].getFullValue()] = result
+                    let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()] //+XER[CA];
+                    this.GPR[args["D"].getFullValue()] = result
                     if(args["Rc"].getFullValue()) {
                         //CR0 : LT GT EQ SO
                         if(result < 0) {
@@ -217,10 +221,10 @@ class Computer {
                 let D = args["D"].getFullValue()
                 let SIMM = EXTS(args["SIMM"].getFullValue(), 16)
                 if (A == 0) {
-                    this.gpr[D] = SIMM
+                    this.GPR[D] = SIMM
                 }
                 else {
-                    this.gpr[D] = this.gpr[A] + SIMM
+                    this.GPR[D] = this.GPR[A] + SIMM
                 }
                 break
             }
@@ -288,27 +292,6 @@ class Computer {
         }      
         this.programCounter = NIA
     }
-    getArgs(instruction, type) {
-        let returnStruct = {}
-        switch(type) {
-            case "I":
-                returnStruct["LI"] = instruction.getSubField(6, 25)
-                returnStruct["AA"] = instruction.getSubField(30, 1)
-                returnStruct["LK"] = instruction.getSubField(31, 1)
-                break
-            case "B":
-                returnStruct["BO"] = instruction.getSubField(6, 5)
-                returnStruct["BI"] = instruction.getSubField(11, 5)
-                returnStruct["BD"] = instruction.getSubField(16, 14)
-                returnStruct["AA"] = instruction.getSubField(30, 1)
-                returnStruct["LK"] = instruction.getSubField(31, 1)
-                break
-            default: 
-                return null;
-        }
-        return returnStruct
-    }
-
 }
 function EXTS(val, originalSize) {
     
