@@ -1,45 +1,82 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
+# Purpose of the Project :
 
-Welcome Martin Oglesby,
+Create a basic power pc assembler emulator that can be used to quick and easy test code online with minimal work.
 
-This is the Code Institute student template for Gitpod. We have preinstalled all of the tools you need to get started. You can safely delete this README.md file, or change it for your own project. Please do read it at least once, though! It contains some important information about Gitpod and the extensions we use.
+# User Stories :
 
-## Gitpod Reminders
+1) as a user i want to be able to input code and quickly see the outcome of the code
 
-To run a frontend (HTML, CSS, Javascript only) application in Gitpod, in the terminal, type:
+2) as a user i want to be able to know what commands are so far usable
 
-`python3 -m http.server`
+3) as a visitor i want to be able to learn a little about how low level operations work. 
 
-A blue button should appear to click: *Make Public*,
 
-Another blue button should appear to click: *Open Browser*.
 
-To run a backend Python file, type `python3 app.py`, if your Python file is named `app.py` of course.
+# Features :
 
-A blue button should appear to click: *Make Public*,
+1) Memory Start
 
-Another blue button should appear to click: *Open Browser*.
+    Main way to interact with the page. Input code in hex and any extra data after
 
-In Gitpod you have superuser security privileges by default. Therefore you do not need to use the `sudo` (superuser do) command in the bash terminal in any of the lessons.
+2) Registers start
 
-## Updates Since The Instructional Video
+    Allow you to set extra initial conditions of registers of memory
 
-We continually tweak and adjust this template to help give you the best experience. Here is the version history:
+3) emulator start
 
-**October 21 2020:** Versions of the HTMLHint, Prettier, Bootstrap4 CDN and Auto Close extensions updated. The Python extension needs to stay the same version for now.
+    When pressed, full emulator side of page is reloaded with initial conditions specified by the user 
 
-**October 08 2020:** Additional large Gitpod files (`core.mongo*` and `core.python*`) are now hidden in the Explorer, and have been added to the `.gitignore` by default.
+4) emulation
 
-**September 22 2020:** Gitpod occasionally creates large `core.Microsoft` files. These are now hidden in the Explorer. A `.gitignore` file has been created to make sure these files will not be committed, along with other common files.
+    Allows the user to start the interpretter and steps through code as a processor actually would, updating all visuals to show the new state of the machine
 
-**April 16 2020:** The template now automatically installs MySQL instead of relying on the Gitpod MySQL image. The message about a Python linter not being installed has been dealt with, and the set-up files are now hidden in the Gitpod file explorer.
+5) play/step
 
-**April 13 2020:** Added the _Prettier_ code beautifier extension instead of the code formatter built-in to Gitpod.
+    allows user to emulate either one step at a time or in large jumps 
 
-**February 2020:** The initialisation files now _do not_ auto-delete. They will remain in your project. You can safely ignore them. They just make sure that your workspace is configured correctly each time you open it. It will also prevent the Gitpod configuration popup from appearing.
+6) limited instruction set 
 
-**December 2019:** Added Eventyret's Bootstrap 4 extension. Type `!bscdn` in a HTML file to add the Bootstrap boilerplate. Check out the <a href="https://github.com/Eventyret/vscode-bcdn" target="_blank">README.md file at the official repo</a> for more options.
+    this implementation is only going to have a few commands implemented so that it can be finished within a reasonable amount of time. 
+    planned command types are all branch commands, compare, add, multiply, subtract and load 
 
---------
+# Future Features: 
 
-Happy coding!
+
+1) skip
+
+    allow user to skip a command in testing 
+
+2) edit memory/registers during emulation 
+
+    allow editting the emulator as its running
+
+3) larger instruction set
+
+    once this is done as a small project, i plan to incrementally increase the implemented instruction set so this can be used to write more complicated codes.
+
+# Typography and Color Scheme :
+
+
+# Wireframes :
+
+## Home Page:
+
+![Image](/wireframes/asmpage.png)
+
+## Howto Page:
+
+
+# Testing
+
+# Client Story Testing
+
+
+# Lighthouse: 
+
+# Others:
+
+
+# Deployment
+
+
+# Credits: 
