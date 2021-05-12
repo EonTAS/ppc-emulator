@@ -8,7 +8,7 @@ Create a basic power pc assembler emulator that can be used to quick and easy te
 
 2) as a user i want to be able to know what commands are so far usable
 
-3) as a visitor i want to be able to learn a little about how low level operations work. 
+3) as a visitor i want to be able to learn a little about how low level operations work through stepping through code line by line
 
 # Features :
 

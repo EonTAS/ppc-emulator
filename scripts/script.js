@@ -1,25 +1,39 @@
 var computer;
 class Bitfield {
     constructor(value, size) {
+        if (size >= 32) {
+            size = 32
+        }
         this.size = size
         this.setValue(value)
     }
+
     setValue(value) {
-        this.value = value ^ ((1<<this.size)-1)
+        if(this.size >= 32) {
+            this.value = value & -1
+        } else {
+            this.value = value & ((1<<this.size)-1)
+
+        }
     }
+
     getFullValue() {
         return this.value
     }
+
     getValue(start,size) {
         let mask = -1
         if (start != 0) {
             mask = ((1<<(this.size-start))-1)
         }
-        return (this.value & mask)>>>(this.size-start-size)        
+        let v = (this.value & mask)>>>(this.size-start-size)        
+        return v
     }
+
     getSubField(start, size) {
         return new Bitfield(this.getValue(start, size), size)
     }
+
     split(splits, names) {
         let returnSplits = {}
         let prevSplit
@@ -33,6 +47,7 @@ class Bitfield {
         returnSplits[names[names.length-1]] = this.getSubField(prevSplit, this.size-prevSplit)
         return returnSplits
     }
+
     setBit(i, val) {
         if(val) {
             this.value |= (1<<(this.size-i-1)) 
@@ -40,6 +55,7 @@ class Bitfield {
             this.value &= ~(1<<(this.size-i-1)) 
         }
     }
+
     getBit(i) {
         return Boolean(this.value | (1<<(this.size-i-1)))
     }
@@ -53,19 +69,23 @@ class Memory {
             this.contents.push(0)
         }
     }
+
     setWord(val, addr) {
         this.contents[addr+0] = (val&0xFF000000)>>>24
         this.contents[addr+1] = (val&0x00FF0000)>>>16
         this.contents[addr+2] = (val&0x0000FF00)>>>8
         this.contents[addr+3] = (val&0x000000FF)
     }
+
     setHalfWord(val, addr) {
         this.contents[addr] =   (val&0xFF00)>>>8
         this.contents[addr+1] = (val&0x00FF)
     }
+
     setByte(val, addr) {
         this.contents[addr] = val&0xFF
     }
+
     getWord(addr) {
         return (
             (this.contents[addr+0]<<24) | 
@@ -74,9 +94,11 @@ class Memory {
              this.contents[addr+3] )
 
     }
+
     getHalfWord(addr) {
         return (this.contents[addr]<<8) | this.contents[addr+1]
     }
+
     getByte(addr) {        
         return this.contents[addr]
     }
@@ -300,13 +322,14 @@ function EXTS(val, originalSize) {
         return val | mask
     }
     return val
-
 }
 
-
 function restartCPU() {
-    text = $("#input").val().replace(/[^A-Fa-f0-9]/g, "");
+    text = $("#inputHex").val().replace(/[^A-Fa-f0-9]/g, "");
     code = text.match(/(.{1,8})/g);
     console.log(code)
     computer = new Computer(code, 0x10)
+    $("#output-side").text(computer.GPR)
 }
+
+restartCPU()
