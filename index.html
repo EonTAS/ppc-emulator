@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stream One</title>
 
     <link rel="stylesheet" href="css/style.css">
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
         integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
-        
-    
+
+
 </head>
+
 <body>
     <header>
         <nav>
@@ -26,16 +28,25 @@
     </header>
     <section class="container-fluid">
         <div class="row">
-            <div class="col-md-6" id="input-side">
+            <div class="col-md-6 side" id="input-side">
                 <div class="row">
                     <div class="col-6">
-                        <button onclick="restartCPU()">
-                            test
-                        </button>
-                        <textarea id="inputHex" class="hex">38630001 38840004 48000008 38A30001 7CC32214 38E4000A</textarea>
-                    
+                        <div class="row">
+                            Input Default values of registers and include memory state here and then press Go
+                        </div>
+                        <div class="row">
+                            <button onclick="restartCPU()">
+                                Go
+                            </button>
+                        </div>
+                        <div class="row">
+                            <textarea id="inputHex" class="hex">38630001 38840004 48000008 38A30001 7CC32214 38E4000A</textarea>
+                        </div>
+
                     </div>
-                    <div class="registers col-6">
+                    <div class="registers col-6 ">
+                        r0 : <input name="r0" class="register" type="text" maxlength="255">
+                        <br>
                         r1 : <input name="r1" class="register" type="text" maxlength="255">
                         <br>
                         r2 : <input name="r2" class="register" type="text" maxlength="255">
@@ -46,79 +57,155 @@
                         <br>
                         r5 : <input name="r5" class="register" type="text" maxlength="255">
                         <br>
-                        r6 : <input name="r5" class="register" type="text" maxlength="255">
+                        r6 : <input name="r6" class="register" type="text" maxlength="255">
                         <br>
-                        r7 : <input name="r5" class="register" type="text" maxlength="255">
+                        r7 : <input name="r7" class="register" type="text" maxlength="255">
                         <br>
-                        r8 : <input name="r5" class="register" type="text" maxlength="255">
+                        r8 : <input name="r8" class="register" type="text" maxlength="255">
                         <br>
-                        r9 : <input name="r5" class="register" type="text" maxlength="255">
+                        r9 : <input name="r9" class="register" type="text" maxlength="255">
                         <br>
-                        r10 : <input name="r5" class="register" type="text" maxlength="255">
+                        r10 : <input name="r10" class="register" type="text" maxlength="255">
                         <br>
-                        r11 : <input name="r5" class="register" type="text" maxlength="255">
+                        r11 : <input name="r11" class="register" type="text" maxlength="255">
                         <br>
-                        r12 : <input name="r5" class="register" type="text" maxlength="255">
+                        r12 : <input name="r12" class="register" type="text" maxlength="255">
                         <br>
-                        r13 : <input name="r5" class="register" type="text" maxlength="255">
+                        r13 : <input name="r13" class="register" type="text" maxlength="255">
                         <br>
-                        r14 : <input name="r5" class="register" type="text" maxlength="255">
+                        r14 : <input name="r14" class="register" type="text" maxlength="255">
                         <br>
-                        r15 : <input name="r5" class="register" type="text" maxlength="255">
+                        r15 : <input name="r15" class="register" type="text" maxlength="255">
                         <br>
-                        r16 : <input name="r5" class="register" type="text" maxlength="255">
+                        r16 : <input name="r16" class="register" type="text" maxlength="255">
                         <br>
-                        r17 : <input name="r5" class="register" type="text" maxlength="255">
+                        r17 : <input name="r17" class="register" type="text" maxlength="255">
                         <br>
-                        r18 : <input name="r5" class="register" type="text" maxlength="255">
+                        r18 : <input name="r18" class="register" type="text" maxlength="255">
                         <br>
-                        r19 : <input name="r5" class="register" type="text" maxlength="255">
+                        r19 : <input name="r19" class="register" type="text" maxlength="255">
                         <br>
-                        r20 : <input name="r5" class="register" type="text" maxlength="255">
+                        r20 : <input name="r20" class="register" type="text" maxlength="255">
                         <br>
-                        r21 : <input name="r5" class="register" type="text" maxlength="255">
+                        r21 : <input name="r21" class="register" type="text" maxlength="255">
                         <br>
-                        r22 : <input name="r5" class="register" type="text" maxlength="255">
+                        r22 : <input name="r22" class="register" type="text" maxlength="255">
                         <br>
-                        r23 : <input name="r5" class="register" type="text" maxlength="255">
+                        r23 : <input name="r23" class="register" type="text" maxlength="255">
                         <br>
-                        r24 : <input name="r5" class="register" type="text" maxlength="255">
+                        r24 : <input name="r24" class="register" type="text" maxlength="255">
                         <br>
-                        r25 : <input name="r5" class="register" type="text" maxlength="255">
+                        r25 : <input name="r25" class="register" type="text" maxlength="255">
                         <br>
-                        r26 : <input name="r5" class="register" type="text" maxlength="255">
+                        r26 : <input name="r26" class="register" type="text" maxlength="255">
                         <br>
-                        r27 : <input name="r5" class="register" type="text" maxlength="255">
+                        r27 : <input name="r27" class="register" type="text" maxlength="255">
                         <br>
-                        r28 : <input name="r5" class="register" type="text" maxlength="255">
+                        r28 : <input name="r28" class="register" type="text" maxlength="255">
                         <br>
-                        r29 : <input name="r5" class="register" type="text" maxlength="255">
+                        r29 : <input name="r29" class="register" type="text" maxlength="255">
                         <br>
-                        r30 : <input name="r5" class="register" type="text" maxlength="255">
+                        r30 : <input name="r30" class="register" type="text" maxlength="255">
                         <br>
-                        r31 : <input name="r5" class="register" type="text" maxlength="255">
+                        r31 : <input name="r31" class="register" type="text" maxlength="255">
                         <br>
                     </div>
                 </div>
-                
+
             </div>
-            <div class="col-md-6" id="output-side">
-                outputs here 
+            <div class="col-md-6 side" id="output-side">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            Step through the program either opcode by opcode or run to the end
+                        </div>
+                        <div class="row">
+                            <button onclick="stepCPU()">
+                                Step forward n steps
+                            </button>
+                            <div class="stepContainer">
+                                n : <input name="stepCount" class="stepCount" type="number" min = "1" max="999" value="1">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <textarea id="output-hex" class="hex"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="registers col-6">
+                        r0 : <input name="r0" class="register" type="text" maxlength="255">
+                        <br>
+                        r1 : <input name="r1" class="register" type="text" maxlength="255">
+                        <br>
+                        r2 : <input name="r2" class="register" type="text" maxlength="255">
+                        <br>
+                        r3 : <input name="r3" class="register" type="text" maxlength="255">
+                        <br>
+                        r4 : <input name="r4" class="register" type="text" maxlength="255">
+                        <br>
+                        r5 : <input name="r5" class="register" type="text" maxlength="255">
+                        <br>
+                        r6 : <input name="r6" class="register" type="text" maxlength="255">
+                        <br>
+                        r7 : <input name="r7" class="register" type="text" maxlength="255">
+                        <br>
+                        r8 : <input name="r8" class="register" type="text" maxlength="255">
+                        <br>
+                        r9 : <input name="r9" class="register" type="text" maxlength="255">
+                        <br>
+                        r10 : <input name="r10" class="register" type="text" maxlength="255">
+                        <br>
+                        r11 : <input name="r11" class="register" type="text" maxlength="255">
+                        <br>
+                        r12 : <input name="r12" class="register" type="text" maxlength="255">
+                        <br>
+                        r13 : <input name="r13" class="register" type="text" maxlength="255">
+                        <br>
+                        r14 : <input name="r14" class="register" type="text" maxlength="255">
+                        <br>
+                        r15 : <input name="r15" class="register" type="text" maxlength="255">
+                        <br>
+                        r16 : <input name="r16" class="register" type="text" maxlength="255">
+                        <br>
+                        r17 : <input name="r17" class="register" type="text" maxlength="255">
+                        <br>
+                        r18 : <input name="r18" class="register" type="text" maxlength="255">
+                        <br>
+                        r19 : <input name="r19" class="register" type="text" maxlength="255">
+                        <br>
+                        r20 : <input name="r20" class="register" type="text" maxlength="255">
+                        <br>
+                        r21 : <input name="r21" class="register" type="text" maxlength="255">
+                        <br>
+                        r22 : <input name="r22" class="register" type="text" maxlength="255">
+                        <br>
+                        r23 : <input name="r23" class="register" type="text" maxlength="255">
+                        <br>
+                        r24 : <input name="r24" class="register" type="text" maxlength="255">
+                        <br>
+                        r25 : <input name="r25" class="register" type="text" maxlength="255">
+                        <br>
+                        r26 : <input name="r26" class="register" type="text" maxlength="255">
+                        <br>
+                        r27 : <input name="r27" class="register" type="text" maxlength="255">
+                        <br>
+                        r28 : <input name="r28" class="register" type="text" maxlength="255">
+                        <br>
+                        r29 : <input name="r29" class="register" type="text" maxlength="255">
+                        <br>
+                        r30 : <input name="r30" class="register" type="text" maxlength="255">
+                        <br>
+                        r31 : <input name="r31" class="register" type="text" maxlength="255">
+                        <br>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <div class="row bg-color-contact">
-            <div>
-                <h3 class="contact-heading uppercase text-center">View My GitHub Projects</h3>
-                <h5 class="uppercase text-center">You can also search on other user profiles</h5>
-            </div>
-
-            <div class="center-form">
-            </div>
-        </div>
-
     </section>
 </body>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript" src="scripts/script.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/script.js"></script>
+
 </html>
