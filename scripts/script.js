@@ -177,8 +177,7 @@ class Computer {
     }
     
     halted() {
-
-        return
+        return this.halt
     }
     step(instruction) {
         console.log("   current instruction : " + instruction.getFullValue().toString(16))
@@ -195,6 +194,7 @@ class Computer {
                 if (type == 266) { //add
 
                     let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()];
+                    result = result<<0
                     this.GPR[args["D"].getFullValue()] = result
                     if(args["Rc"].getFullValue()) {
                         //CR0 : LT GT EQ SO
@@ -213,6 +213,7 @@ class Computer {
                 } else if (type == 10) { //addc
 
                     let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()];
+                    result = result<<0
                     this.GPR[args["D"].getFullValue()] = result
                     if(args["Rc"].getFullValue()) {
                         //CR0 : LT GT EQ SO
@@ -232,6 +233,7 @@ class Computer {
                 } else if (type == 138) { //add extended
 
                     let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()] //+XER[CA];
+                    result = result<<0
                     this.GPR[args["D"].getFullValue()] = result
                     if(args["Rc"].getFullValue()) {
                         //CR0 : LT GT EQ SO
@@ -261,6 +263,7 @@ class Computer {
                 }
                 else {
                     this.GPR[D] = this.GPR[A] + SIMM
+                    this.GPR[D] = this.GPR[D]<<0
                 }
                 break
             }
@@ -343,6 +346,9 @@ function stepCPU() {
     for(let i = 0; i < steps; i++) {
         if(!computer.halted()){
             computer.stepOnce()
+        }
+        else {
+            break
         }
     }
     refreshView(computer)
