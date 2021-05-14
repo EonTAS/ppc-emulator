@@ -71,6 +71,7 @@ class Memory {
     }
 
     setWord(val, addr) {
+        addr = this.getAddr(addr)      
         this.contents[addr+0] = (val&0xFF000000)>>>24
         this.contents[addr+1] = (val&0x00FF0000)>>>16
         this.contents[addr+2] = (val&0x0000FF00)>>>8
@@ -78,15 +79,18 @@ class Memory {
     }
 
     setHalfWord(val, addr) {
+        addr = this.getAddr(addr)      
         this.contents[addr] =   (val&0xFF00)>>>8
         this.contents[addr+1] = (val&0x00FF)
     }
 
     setByte(val, addr) {
+        addr = this.getAddr(addr)      
         this.contents[addr] = val&0xFF
     }
 
     getWord(addr) {
+        addr = this.getAddr(addr)      
         return (
             (this.contents[addr+0]<<24) | 
             (this.contents[addr+1]<<16) | 
@@ -96,15 +100,25 @@ class Memory {
     }
 
     getHalfWord(addr) {
+        addr = this.etAddr(addr)      
         return (this.contents[addr]<<8) | this.contents[addr+1]
     }
 
-    getByte(addr) {        
+    getByte(addr) {  
+        addr = this.getAddr(addr)      
         return this.contents[addr]
     }
 
     getSize() {
-        return this.size*4
+        return this.size
+    }
+
+    getAddr(addr) {        
+        addr = addr%this.size
+        if (addr<this.size) {
+            addr = addr+this.size
+        }
+        return addr
     }
 }
 
@@ -112,7 +126,7 @@ class Memory {
 
 // and https://www.nxp.com/docs/en/user-guide/MPCFPE_AD_R1.pdf
 class Computer {
-    constructor(program, maxLoop = 12) {
+    constructor(program) {
         this.memory = new Memory(0x10000)
 
         //architecture defined registers excluding SPRs
@@ -150,21 +164,21 @@ class Computer {
             this.memory.setWord(parseInt(program[i], 16), 4*i)
         }
 
-        this.GPR[1] = this.memory.getSize()-0x10;
-
+        //this.GPR[1] = this.memory.getSize()-0x10;
+        this.halt = false
         console.log(this.memory)
-
-        this.programCounter = 0
-        this.count = 0
-        while (this.programCounter < program.length*4) {
-            console.log("PC = 0x" + this.programCounter.toString(16))
-            let instruction = new Bitfield(this.memory.getWord(this.programCounter), 32)
-            this.step(instruction)
-            if(this.count++ > maxLoop) {
-                break
-            }
+    }
+    stepOnce() {
+        console.log("PC = 0x" + this.programCounter.toString(16))
+        let instruction = new Bitfield(this.memory.getWord(this.programCounter), 32)
+        if(!this.step(instruction)) {
+            this.halt = true;
         }
-        console.log(this)
+    }
+    
+    halted() {
+
+        return
     }
     step(instruction) {
         console.log("   current instruction : " + instruction.getFullValue().toString(16))
@@ -309,10 +323,11 @@ class Computer {
             }
             default: 
                 console.log("   unknown instruction : " + opcode)
-                break
+                return false
 
         }      
         this.programCounter = NIA
+        return true;
     }
 }
 function EXTS(val, originalSize) {
@@ -323,13 +338,27 @@ function EXTS(val, originalSize) {
     }
     return val
 }
-
+function stepCPU() {
+    let steps = $(".stepCount").val()
+    for(let i = 0; i < steps; i++) {
+        if(!computer.halted()){
+            computer.stepOnce()
+        }
+    }
+    refreshView(computer)
+}
 function restartCPU() {
-    text = $("#inputHex").val().replace(/[^A-Fa-f0-9]/g, "");
+    text = $("#input-side .hex").val().replace(/[^A-Fa-f0-9]/g, "");
     code = text.match(/(.{1,8})/g);
     console.log(code)
-    computer = new Computer(code, 0x10)
-    $("#output-side").text(computer.GPR)
+    computer = new Computer(code)
+    refreshView(computer)
+    $("#output-side .hex").val(code)
 }
-
+function refreshView(computer) {
+    var registers = $("#output-side .register")
+    for(let i = 0; i < 32; i++) {
+        $(registers[i]).val(computer.GPR[i])
+    }
+}
 restartCPU()
