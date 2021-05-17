@@ -354,16 +354,45 @@ function stepCPU() {
     refreshView(computer)
 }
 function restartCPU() {
-    text = $("#input-side .hex").val().replace(/[^A-Fa-f0-9]/g, "");
-    code = text.match(/(.{1,8})/g);
-    console.log(code)
+    let code = readCode();
     computer = new Computer(code)
+    readRegisters(computer)
     refreshView(computer)
     $("#output-side .hex").val(code)
 }
+
+function readCode() {
+    let text = $("#input-side .hex").val()
+    let lines = text.split("\n") 
+    let code = []
+    for(line of lines) { //for each line get code contained
+        line = line.split("#")[0] //cut any comments off the end of the line
+        line = line.replace(/[^A-Fa-f0-9]/g, "") //strip away everything that is not hexadecimal
+        let newCode = line.match(/(.{8})/g) //get each 8 char long segment of the hex
+        if(newCode) { //check truthiness of line since it could be empty and then null would be appended
+            code = code.concat(newCode)
+        }    
+    }
+    return code
+
+}
+
+function readRegisters(computer) {
+    var registers = $("#input-side .register") //get all input registers
+    for(let i = 0; i < registers.length; i++) {
+        let val = $(registers[i]).val() //if a custom value set, use it, else use 0
+        if (val != null) {
+            computer.GPR[i] = val<<0; //val converted to a 32 bit number using leftshift 0 bits, since bitshifts operate on 32 bit ints only
+        }
+        else {
+            computer.GPR[i] = 0;
+        }
+    }
+}
+
 function refreshView(computer) {
     var registers = $("#output-side .register")
-    for(let i = 0; i < 32; i++) {
+    for(let i = 0; i < registers.length; i++) {
         $(registers[i]).val(computer.GPR[i])
     }
 }
