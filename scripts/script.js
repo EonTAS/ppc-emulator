@@ -379,8 +379,8 @@ function readCode() {
 function readRegisters(computer) {
     var registers = $("#input-side .register") //get all input registers
     for(let i = 0; i < registers.length; i++) {
-        let val = $(registers[i]).val() //if a custom value set, use it, else use 0
-        if (val != null) {
+        let val = parseInt($(registers[i]).val())//if a custom value set, use it, else use 0
+        if (val != NaN) {
             computer.GPR[i] = val<<0; //val converted to a 32 bit number using leftshift 0 bits, since bitshifts operate on 32 bit ints only
         }
         else {
