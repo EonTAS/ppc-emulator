@@ -398,11 +398,21 @@ function refreshView(computer) {
     let code = ""
     let count = 0
     for(let i = 0; i < memory.getSize(); i+=4) {
-        code += (memory.getWord(i)>>>0).toString(16).padStart(8, "0") + " ";
+        let currentLine = i == computer.programCounter
+        if (currentLine) {
+            code += "|"
+        }
+        code += (memory.getWord(i)>>>0).toString(16).toUpperCase().padStart(8, "0");
+        if (currentLine) {
+            code += "|"
+        }
         count++
         if (count == 4) {
             count = 0
             code += "\n"
+        }
+        else {
+            code += " "
         }
     }
     $("#output-side .hex").val(code)
