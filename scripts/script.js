@@ -127,7 +127,7 @@ class Memory {
 // and https://www.nxp.com/docs/en/user-guide/MPCFPE_AD_R1.pdf
 class Computer {
     constructor(program) {
-        this.memory = new Memory(0x10000)
+        this.memory = new Memory(0x100)
 
         //architecture defined registers excluding SPRs
         this.CR = [new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4)]
@@ -358,7 +358,6 @@ function restartCPU() {
     computer = new Computer(code)
     readRegisters(computer)
     refreshView(computer)
-    $("#output-side .hex").val(code)
 }
 
 function readCode() {
@@ -395,5 +394,17 @@ function refreshView(computer) {
     for(let i = 0; i < registers.length; i++) {
         $(registers[i]).val(computer.GPR[i])
     }
+    let memory = computer.memory;
+    let code = ""
+    let count = 0
+    for(let i = 0; i < memory.getSize(); i+=4) {
+        code += (memory.getWord(i)>>>0).toString(16).padStart(8, "0") + " ";
+        count++
+        if (count == 4) {
+            count = 0
+            code += "\n"
+        }
+    }
+    $("#output-side .hex").val(code)
 }
 restartCPU()
