@@ -251,7 +251,22 @@ class Computer {
                     } 
                     
                 }
-                else {
+                else if (type == 0) { //cmp
+                    console.log("cmp")
+                    args = instruction.split([6,9, 11,16,21,31], ["crfD","L", "A","B", "0", "reserved0"])
+                    let A = args["A"].getFullValue()
+                    let B = args["B"].getFullValue()
+                    let c;
+                    if (this.GPR[A] < this.GPR[B]) {
+                        c = 0b1000;
+                    } else if (this.GPR[A] > this.GPR[B]) {
+                        c = 0b0100
+                    }
+                    else {
+                        c = 0b0010
+                    }
+                    let crfD = args["crfD"].getFullValue()
+                    this.CR[crfD].setValue(c + this.XER["SO"].getFullValue())
                     
                 }
                 break
@@ -352,23 +367,6 @@ class Computer {
                     } 
                 }
                 break
-            }
-            case 31: { //cmp
-                args = instruction.split([6,9, 11,16,21,31], ["crfD","L", "A","B", "0", "reserved0"])
-                let A = args["A"].getFullValue()
-                let B = args["B"].getFullValue()
-                let c;
-                if (this.GPR[A] < this.GPR[B]) {
-                    c = 0b100;
-                } else if (this.GPR[A] > this.GPR[B]) {
-                    c = 0b010
-                }
-                else {
-                    c = 0b001
-                }
-                let crfD = args["crfD"].getFullValue()
-                this.CR[crfD].setValue(c<<1 + this.XER["SO"])
-                break 
             }
             case 11: { //cmpi
                 args = instruction.split([6,9, 11,16], ["crfD","L", "A","SIMM"])
