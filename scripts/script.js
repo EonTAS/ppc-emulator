@@ -57,7 +57,7 @@ class Bitfield {
     }
 
     getBit(i) {
-        return Boolean(this.value | (1<<(this.size-i-1)))
+        return Boolean(this.value & (1<<(this.size-i-1)))
     }
 }
 
@@ -251,6 +251,9 @@ class Computer {
                     } 
                     
                 }
+                else {
+                    
+                }
                 break
             }
             case 14: { //addi
@@ -266,6 +269,30 @@ class Computer {
                     this.GPR[D] = this.GPR[D]<<0
                 }
                 break
+            }
+            case 12: { //addic
+                break
+
+            }
+            case 13: { //addic.
+
+                break
+
+            }
+            case 15: { //addis
+                args = instruction.split([6,11,16], ["D", "A", "SIMM"])
+                let A = args["A"].getFullValue()
+                let D = args["D"].getFullValue()
+                let SIMM = args["SIMM"].getFullValue()<<16
+                if (A == 0) {
+                    this.GPR[D] = SIMM
+                }
+                else {
+                    this.GPR[D] = this.GPR[A] + SIMM
+                    this.GPR[D] = this.GPR[D]<<0
+                }
+                break
+
             }
             case 18: {//branch 
                 console.log("   branch")
@@ -289,7 +316,9 @@ class Computer {
                     this.ctr = this.ctr-1
                 }
                 let ctr_ok = (args["BO"].getBit(2)) | ((this.ctr != 0 ) ^ args["BO"].getBit(3)) 
-                let cond_ok = (args["BO"].getBit(0)) | (this.CR.getBit(args["BI"].getFullValue()) == args["BO"].getBit(1))
+                let cond_ok = (args["BO"].getBit(0)) | (this.CR[0].getBit(args["BI"].getFullValue()) == args["BO"].getBit(1))
+                console.log(ctr_ok)
+                console.log(cond_ok)
                 if (ctr_ok && cond_ok) {
                     
                     if (args["AA"].getFullValue()) {
@@ -323,6 +352,40 @@ class Computer {
                     } 
                 }
                 break
+            }
+            case 31: { //cmp
+                args = instruction.split([6,9, 11,16,21,31], ["crfD","L", "A","B", "0", "reserved0"])
+                let A = args["A"].getFullValue()
+                let B = args["B"].getFullValue()
+                let c;
+                if (this.GPR[A] < this.GPR[B]) {
+                    c = 0b100;
+                } else if (this.GPR[A] > this.GPR[B]) {
+                    c = 0b010
+                }
+                else {
+                    c = 0b001
+                }
+                let crfD = args["crfD"].getFullValue()
+                this.CR[crfD].setValue(c<<1 + this.XER["SO"])
+                break 
+            }
+            case 11: { //cmpi
+                args = instruction.split([6,9, 11,16], ["crfD","L", "A","SIMM"])
+                let A = args["A"].getFullValue()
+                let SIMM = args["SIMM"].getFullValue()
+                let c;
+                if (this.GPR[A] < SIMM) {
+                    c = 0b1000;
+                } else if (this.GPR[A] > SIMM) {
+                    c = 0b0100
+                }
+                else {
+                    c = 0b0010
+                }
+                let crfD = args["crfD"].getFullValue()
+                this.CR[crfD].setValue(c + this.XER["SO"].getFullValue())
+                break 
             }
             default: 
                 console.log("   unknown instruction : " + opcode)
@@ -377,6 +440,7 @@ function readCode() {
 }
 
 function readRegisters(computer) {
+    //add onclick handler to register to make it read as hex instead of dec? keep a class on it using jquery to check it
     var registers = $("#input-side .register") //get all input registers
     for(let i = 0; i < registers.length; i++) {
         let val = parseInt($(registers[i]).val())//if a custom value set, use it, else use 0
@@ -395,26 +459,41 @@ function refreshView(computer) {
         $(registers[i]).val(computer.GPR[i])
     }
     let memory = computer.memory;
-    let code = ""
+    let code = `
+                                <tr>
+                                    <th></th>
+                                    <th>0 1 2 3 </th>
+                                    <th>4 5 6 7 </th>
+                                    <th>8 9 A B</th>
+                                    <th>C D E F</th>
+                                </tr>`
     let count = 0
+
+
+
     for(let i = 0; i < memory.getSize(); i+=4) {
+        if (count==0) {
+            code += "<tr>"
+            code += "<th>"
+            code += i.toString(16).toUpperCase().padStart(4, "0")
+            code += "</th>"
+        }
+        code += "<td>"
         let currentLine = i == computer.programCounter
         if (currentLine) {
-            code += "|"
+            code += "<b>"
         }
         code += (memory.getWord(i)>>>0).toString(16).toUpperCase().padStart(8, "0");
         if (currentLine) {
-            code += "|"
+            code += "</b>"
         }
         count++
+        code += "</td>"
         if (count == 4) {
             count = 0
-            code += "\n"
-        }
-        else {
-            code += " "
+            code += "</tr>"
         }
     }
-    $("#output-side .hex").val(code)
+    $("#output-side .hex").html(code)
 }
 restartCPU()
