@@ -188,10 +188,10 @@ class Computer {
         let args;
         switch(opcode) {
             case 31: {//add
-                console.log("   add")
                 args = instruction.split([6,11,16,21,22,31], ["D", "A", "B", "OE", "type", "Rc"])
                 var type = args["type"].getFullValue()
                 if (type == 266) { //add
+                    console.log("   add")
 
                     let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()];
                     result = result<<0
@@ -211,6 +211,7 @@ class Computer {
                     } 
                     
                 } else if (type == 10) { //addc
+                    console.log("   addc")
 
                     let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()];
                     result = result<<0
@@ -231,6 +232,7 @@ class Computer {
                     } 
                     
                 } else if (type == 138) { //add extended
+                    console.log("   adde")
 
                     let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()] //+XER[CA];
                     result = result<<0
@@ -252,7 +254,7 @@ class Computer {
                     
                 }
                 else if (type == 0) { //cmp
-                    console.log("cmp")
+                    console.log("   cmp")
                     args = instruction.split([6,9, 11,16,21,31], ["crfD","L", "A","B", "0", "reserved0"])
                     let A = args["A"].getFullValue()
                     let B = args["B"].getFullValue()
@@ -272,6 +274,7 @@ class Computer {
                 break
             }
             case 14: { //addi
+                console.log("   addi")
                 args = instruction.split([6,11,16], ["D", "A", "SIMM"])
                 let A = args["A"].getFullValue()
                 let D = args["D"].getFullValue()
@@ -295,6 +298,7 @@ class Computer {
 
             }
             case 15: { //addis
+                console.log("   addis")
                 args = instruction.split([6,11,16], ["D", "A", "SIMM"])
                 let A = args["A"].getFullValue()
                 let D = args["D"].getFullValue()
@@ -310,7 +314,7 @@ class Computer {
 
             }
             case 18: {//branch 
-                console.log("   branch")
+                console.log("   b")
                 args = instruction.split([6,30,31], ["LI", "AA", "LK"])
                 if (args["AA"].getFullValue()) {
                     NIA = EXTS((args["LI"].getFullValue())<<2,24)
@@ -325,7 +329,7 @@ class Computer {
                 break 
             }
             case 16: {//branch conditional
-                console.log("   branch conditional")
+                console.log("   bc")
                 args = instruction.split([6,11,16,30,31], ["BO", "BI", "BD", "AA", "LK"])
                 if (!args["BO"].getBit(2)) {
                     this.ctr = this.ctr-1
@@ -351,6 +355,8 @@ class Computer {
             }
             case 19: { //branch conditional to count register
                 
+                console.log("   bcctr")
+                
                 args = instruction.split([6,11,16,21, 30,31], ["BO", "BI", "0", "type", "LK"])
                 let cond_ok = (args["BO"].getBit(0)) | (this.CR.getBit(args["BI"].getFullValue()) == args["BO"].getBit(1))
                 if (cond_ok) {
@@ -369,6 +375,8 @@ class Computer {
                 break
             }
             case 11: { //cmpi
+                
+                console.log("   cmpi")
                 args = instruction.split([6,9, 11,16], ["crfD","L", "A","SIMM"])
                 let A = args["A"].getFullValue()
                 let SIMM = args["SIMM"].getFullValue()
