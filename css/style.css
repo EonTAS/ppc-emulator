@@ -58,9 +58,19 @@ nav a:hover {
 
     font-family: 'Roboto Mono', monospace;
 }
-
+#output-hex tr {
+    height: 10px;
+}
+#output-hex tr td {
+    padding: 0;
+    height:10px;
+}
 
 #output-side {
     background-color: #333;
     color: #aaa
+}
+
+.currentCommand {
+    color: #F00
 }

@@ -1,40 +1,40 @@
 var computer;
-class Bitfield {
+class Bitfield { //class that allows easier access to the bit representation of a 32 bit value.
     constructor(value, size) {
-        if (size >= 32) {
+        if (size >= 32) { //max allowed size is 32
             size = 32
         }
-        this.size = size
-        this.setValue(value)
+        this.size = size //store size
+        this.setValue(value) //store value but masked to appropriate size
     }
 
     setValue(value) {
-        if(this.size >= 32) {
+        if(this.size >= 32) { //due to weirdness in javascript implementation of bitshift, have to have an edgecase for a 32 bit shift (1<<32 should == 0 but it gives 1 since it masks the 32 with a 31 first)
             this.value = value & -1
         } else {
-            this.value = value & ((1<<this.size)-1)
-
+            this.value = value & ((1<<this.size)-1) 
         }
     }
 
-    getFullValue() {
-        return this.value
-    }
-
-    getValue(start,size) {
+    getValue(start = 0,size = -1) {
+        //default values for start and size so less arguments can be given to simplify calling
+        if (size < 0) {
+            size = this.size - start;
+        }
         let mask = -1
-        if (start != 0) {
+        if (start != 0) { //creates a mask that removes all unneccessary data off the left of the data.
             mask = ((1<<(this.size-start))-1)
         }
-        let v = (this.value & mask)>>>(this.size-start-size)        
+        let v = (this.value & mask)>>>(this.size-start-size) //creates the unsigned value by then shifting data to the right
         return v
     }
 
+    
     getSubField(start, size) {
         return new Bitfield(this.getValue(start, size), size)
     }
 
-    split(splits, names) {
+    split(splits, names) { //splits the value into a new array of data as specified 
         let returnSplits = {}
         let prevSplit
         for(let i = 0; i < splits.length; i++) {
@@ -48,7 +48,7 @@ class Bitfield {
         return returnSplits
     }
 
-    setBit(i, val) {
+    setBit(i, val) { 
         if(val) {
             this.value |= (1<<(this.size-i-1)) 
         } else {
@@ -61,7 +61,7 @@ class Bitfield {
     }
 }
 
-class Memory {
+class Memory { //stores all data in the computer memory as single bytes so that things can be addressed easily.
     constructor(size) {
         this.size = size;
         this.contents = [];
@@ -100,7 +100,7 @@ class Memory {
     }
 
     getHalfWord(addr) {
-        addr = this.etAddr(addr)      
+        addr = this.getAddr(addr)      
         return (this.contents[addr]<<8) | this.contents[addr+1]
     }
 
@@ -127,7 +127,7 @@ class Memory {
 // and https://www.nxp.com/docs/en/user-guide/MPCFPE_AD_R1.pdf
 class Computer {
     constructor(program) {
-        this.memory = new Memory(0x100)
+        this.memory = new Memory(0x200)
 
         //architecture defined registers excluding SPRs
         this.CR = [new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4), new Bitfield(0,4)]
@@ -137,9 +137,9 @@ class Computer {
         //SO = copy of XER[SO] 
 
 
-        this.FPRs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        this.FPRs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] //floating point registers, wont be used here.
         this.FPSCR = new Bitfield(0,32)
-        this.GPR = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        this.GPR = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] //normal 32 bit int registers, will be in use.
         
         //Architecture-Defined SPRs Implemented 
         this.lr = 0
@@ -176,117 +176,33 @@ class Computer {
         }
     }
     
-    halted() {
-        return this.halt
-    }
     step(instruction) {
-        console.log("   current instruction : " + instruction.getFullValue().toString(16))
+        console.log("   current instruction : " + instruction.getValue().toString(16))
         let opcode = instruction.getValue(0,6)
         console.log("   " + opcode)
         let CIA = this.programCounter //current instruction address
         let NIA = CIA + 0x4 //next instruction address
         let args;
         switch(opcode) {
-            case 31: {//add
-                args = instruction.split([6,11,16,21,22,31], ["D", "A", "B", "OE", "type", "Rc"])
-                var type = args["type"].getFullValue()
-                if (type == 266) { //add
-                    console.log("   add")
 
-                    let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()];
-                    result = result<<0
-                    this.GPR[args["D"].getFullValue()] = result
-                    if(args["Rc"].getFullValue()) {
-                        //CR0 : LT GT EQ SO
-                        if(result < 0) {
-                            this.CR[0].setValue(0b1000)
-                        } else if (result > 0) {
-                            this.CR[0].setValue(0b0100)
-                        } else {
-                            this.CR[0].setValue(0b0010)
-                        }
-                    } 
-                    if(args["OE"].getFullValue()) {
-                        //XER : SO, OV
-                    } 
-                    
-                } else if (type == 10) { //addc
-                    console.log("   addc")
-
-                    let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()];
-                    result = result<<0
-                    this.GPR[args["D"].getFullValue()] = result
-                    if(args["Rc"].getFullValue()) {
-                        //CR0 : LT GT EQ SO
-                        if(result < 0) {
-                            this.CR[0].setValue(0b1000)
-                        } else if (result > 0) {
-                            this.CR[0].setValue(0b0100)
-                        } else {
-                            this.CR[0].setValue(0b0010)
-                        }
-                    } 
-                    if(args["OE"].getValue()) {
-                        //CA
-                        //XER : SO, OV
-                    } 
-                    
-                } else if (type == 138) { //add extended
-                    console.log("   adde")
-
-                    let result = this.GPR[args["A"].getFullValue()] + this.GPR[args["B"].getFullValue()] //+XER[CA];
-                    result = result<<0
-                    this.GPR[args["D"].getFullValue()] = result
-                    if(args["Rc"].getFullValue()) {
-                        //CR0 : LT GT EQ SO
-                        if(result < 0) {
-                            this.CR[0].setValue(0b1000)
-                        } else if (result > 0) {
-                            this.CR[0].setValue(0b0100)
-                        } else {
-                            this.CR[0].setValue(0b0010)
-                        }
-                    } 
-                    if(args["OE"].getFullValue()) {
-                        //CA
-                        //XER : SO, OV
-                    } 
-                    
-                }
-                else if (type == 0) { //cmp
-                    console.log("   cmp")
-                    args = instruction.split([6,9, 11,16,21,31], ["crfD","L", "A","B", "0", "reserved0"])
-                    let A = args["A"].getFullValue()
-                    let B = args["B"].getFullValue()
-                    let c;
-                    if (this.GPR[A] < this.GPR[B]) {
-                        c = 0b1000;
-                    } else if (this.GPR[A] > this.GPR[B]) {
-                        c = 0b0100
-                    }
-                    else {
-                        c = 0b0010
-                    }
-                    let crfD = args["crfD"].getFullValue()
-                    this.CR[crfD].setValue(c + this.XER["SO"].getFullValue())
-                    
-                }
-                break
-            }
-            case 14: { //addi
-                console.log("   addi")
-                args = instruction.split([6,11,16], ["D", "A", "SIMM"])
-                let A = args["A"].getFullValue()
-                let D = args["D"].getFullValue()
-                let SIMM = EXTS(args["SIMM"].getFullValue(), 16)
-                if (A == 0) {
-                    this.GPR[D] = SIMM
+            case 11: { //cmpi
+                
+                console.log("   cmpi")
+                args = instruction.split([6,9, 11,16], ["crfD","L", "A","SIMM"])
+                let A = args["A"].getValue()
+                let SIMM = args["SIMM"].getValue()
+                let c;
+                if (this.GPR[A] < SIMM) {
+                    c = 0b1000;
+                } else if (this.GPR[A] > SIMM) {
+                    c = 0b0100
                 }
                 else {
-                    this.GPR[D] = this.GPR[A] + SIMM
-                    this.GPR[D] = this.GPR[D]<<0
+                    c = 0b0010
                 }
-                break
+                let crfD = args["crfD"].getValue()
+                this.CR[crfD].setValue(c + this.XER["SO"].getValue())
+                break 
             }
             case 12: { //addic
                 break
@@ -297,12 +213,27 @@ class Computer {
                 break
 
             }
+            case 14: { //addi
+                console.log("   addi")
+                args = instruction.split([6,11,16], ["D", "A", "SIMM"])
+                let A = args["A"].getValue()
+                let D = args["D"].getValue()
+                let SIMM = EXTS(args["SIMM"].getValue(), 16)
+                if (A == 0) {
+                    this.GPR[D] = SIMM
+                }
+                else {
+                    this.GPR[D] = this.GPR[A] + SIMM
+                    this.GPR[D] = this.GPR[D]<<0
+                }
+                break
+            }
             case 15: { //addis
                 console.log("   addis")
                 args = instruction.split([6,11,16], ["D", "A", "SIMM"])
-                let A = args["A"].getFullValue()
-                let D = args["D"].getFullValue()
-                let SIMM = args["SIMM"].getFullValue()<<16
+                let A = args["A"].getValue()
+                let D = args["D"].getValue()
+                let SIMM = args["SIMM"].getValue()<<16
                 if (A == 0) {
                     this.GPR[D] = SIMM
                 }
@@ -313,21 +244,6 @@ class Computer {
                 break
 
             }
-            case 18: {//branch 
-                console.log("   b")
-                args = instruction.split([6,30,31], ["LI", "AA", "LK"])
-                if (args["AA"].getFullValue()) {
-                    NIA = EXTS((args["LI"].getFullValue())<<2,24)
-                } else {
-                    NIA = CIA + EXTS((args["LI"].getFullValue())<<2, 24)
-                }
-                console.log("   branch to 0x" + NIA.toString(16))
-                if (args["LK"].getFullValue()) {
-                    this.lr = CIA + 4
-                    console.log("   set lr to 0x" + this.lr.toString(16))
-                } 
-                break 
-            }
             case 16: {//branch conditional
                 console.log("   bc")
                 args = instruction.split([6,11,16,30,31], ["BO", "BI", "BD", "AA", "LK"])
@@ -335,63 +251,154 @@ class Computer {
                     this.ctr = this.ctr-1
                 }
                 let ctr_ok = (args["BO"].getBit(2)) | ((this.ctr != 0 ) ^ args["BO"].getBit(3)) 
-                let cond_ok = (args["BO"].getBit(0)) | (this.CR[0].getBit(args["BI"].getFullValue()) == args["BO"].getBit(1))
-                console.log(ctr_ok)
-                console.log(cond_ok)
+                let cond_ok = (args["BO"].getBit(0)) | (this.CR[0].getBit(args["BI"].getValue()) == args["BO"].getBit(1))
                 if (ctr_ok && cond_ok) {
                     
-                    if (args["AA"].getFullValue()) {
-                        NIA = EXTS((args["BD"].getFullValue())<<2,16)
+                    if (args["AA"].getValue()) {
+                        NIA = EXTS((args["BD"].getValue())<<2,16)
                     } else {
-                        NIA = CIA + EXTS((args["BD"].getFullValue())<<2, 16)
+                        NIA = CIA + EXTS((args["BD"].getValue())<<2, 16)
                     }
                     console.log("   conditional branch to 0x" + NIA.toString(16))
-                    if (args["LK"].getFullValue()) {
+                    if (args["LK"].getValue()) {
                         this.lr = CIA + 4
                         console.log("   set lr to 0x" + this.lr.toString(16))
                     } 
                 }
                 break
+            }
+            case 18: {//branch 
+                console.log("   b")
+                args = instruction.split([6,30,31], ["LI", "AA", "LK"])
+                if (args["AA"].getValue()) {
+                    NIA = EXTS((args["LI"].getValue())<<2,24)
+                } else {
+                    NIA = CIA + EXTS((args["LI"].getValue())<<2, 24)
+                }
+                console.log("   branch to 0x" + NIA.toString(16))
+                if (args["LK"].getValue()) {
+                    this.lr = CIA + 4
+                    console.log("   set lr to 0x" + this.lr.toString(16))
+                } 
+                break 
             }
             case 19: { //branch conditional to count register
                 
                 console.log("   bcctr")
                 
                 args = instruction.split([6,11,16,21, 30,31], ["BO", "BI", "0", "type", "LK"])
-                let cond_ok = (args["BO"].getBit(0)) | (this.CR.getBit(args["BI"].getFullValue()) == args["BO"].getBit(1))
+                let cond_ok = (args["BO"].getBit(0)) | (this.CR.getBit(args["BI"].getValue()) == args["BO"].getBit(1))
                 if (cond_ok) {
-                    let type = args["type"].getFullValue()
+                    let type = args["type"].getValue()
                     if (type == 528){
                         NIA = this.ctr<<2
                     } else if (type == 16) {
                         NIA = this.lr<<2
                     }
                     console.log("   conditional branch to count register 0x" + this.ctr.toString(16))
-                    if (args["LK"].getFullValue()) {
+                    if (args["LK"].getValue()) {
                         this.lr = CIA + 4
                         console.log("   set lr to 0x" + this.lr.toString(16))
                     } 
                 }
                 break
             }
-            case 11: { //cmpi
+            case 31: {//everything else - add, addc, adde, cmp
+                args = instruction.split([6,11,16,21,22,31], ["D", "A", "B", "OE", "type", "Rc"])
+                var type = args["type"].getValue()
+                switch(type) {
+                    case 266: {  //add
+                        console.log("   add")
+
+                        let result = this.GPR[args["A"].getValue()] + this.GPR[args["B"].getValue()];
+                        result = result<<0
+                        this.GPR[args["D"].getValue()] = result
+                        if(args["Rc"].getValue()) {
+                            //CR0 : LT GT EQ SO
+                            if(result < 0) {
+                                this.CR[0].setValue(0b1000)
+                            } else if (result > 0) {
+                                this.CR[0].setValue(0b0100)
+                            } else {
+                                this.CR[0].setValue(0b0010)
+                            }
+                        } 
+                        if(args["OE"].getValue()) {
+                            //XER : SO, OV
+                        } 
+                        break;
+                    }
+                    case 10: { //addc
+                        console.log("   addc")
+
+                        let result = this.GPR[args["A"].getValue()] + this.GPR[args["B"].getValue()];
+                        result = result<<0
+                        this.GPR[args["D"].getValue()] = result
+                        if(args["Rc"].getValue()) {
+                            //CR0 : LT GT EQ SO
+                            if(result < 0) {
+                                this.CR[0].setValue(0b1000)
+                            } else if (result > 0) {
+                                this.CR[0].setValue(0b0100)
+                            } else {
+                                this.CR[0].setValue(0b0010)
+                            }
+                        } 
+                        if(args["OE"].getValue()) {
+                            //CA
+                            //XER : SO, OV
+                        } 
+                        
+                        break;
+                    }
+                    case 138: { //add extended
+                        console.log("   adde")
+
+                        let result = this.GPR[args["A"].getValue()] + this.GPR[args["B"].getValue()] //+XER[CA];
+                        result = result<<0
+                        this.GPR[args["D"].getValue()] = result
+                        if(args["Rc"].getValue()) {
+                            //CR0 : LT GT EQ SO
+                            if(result < 0) {
+                                this.CR[0].setValue(0b1000)
+                            } else if (result > 0) {
+                                this.CR[0].setValue(0b0100)
+                            } else {
+                                this.CR[0].setValue(0b0010)
+                            }
+                        } 
+                        if(args["OE"].getValue()) {
+                            //CA
+                            //XER : SO, OV
+                        } 
+                    
                 
-                console.log("   cmpi")
-                args = instruction.split([6,9, 11,16], ["crfD","L", "A","SIMM"])
-                let A = args["A"].getFullValue()
-                let SIMM = args["SIMM"].getFullValue()
-                let c;
-                if (this.GPR[A] < SIMM) {
-                    c = 0b1000;
-                } else if (this.GPR[A] > SIMM) {
-                    c = 0b0100
+                        break;
+                    }
+                    case 0: {//cmp
+                        console.log("   cmp")
+                        args = instruction.split([6,9, 11,16,21,31], ["crfD","L", "A","B", "0", "reserved0"])
+                        let A = args["A"].getValue()
+                        let B = args["B"].getValue()
+                        let c;
+                        if (this.GPR[A] < this.GPR[B]) {
+                            c = 0b1000;
+                        } else if (this.GPR[A] > this.GPR[B]) {
+                            c = 0b0100
+                        }
+                        else {
+                            c = 0b0010
+                        }
+                        let crfD = args["crfD"].getValue()
+                        this.CR[crfD].setValue(c + this.XER["SO"].getValue())
+                        
+                
+                        break;
+                    }
+                    default:
+                        break;
                 }
-                else {
-                    c = 0b0010
-                }
-                let crfD = args["crfD"].getFullValue()
-                this.CR[crfD].setValue(c + this.XER["SO"].getFullValue())
-                break 
+                break;
             }
             default: 
                 console.log("   unknown instruction : " + opcode)
@@ -405,7 +412,7 @@ class Computer {
 function EXTS(val, originalSize) {
     
     if(val>>(originalSize-1)) {
-        let mask = ((2<<(32-originalSize))-1)<<originalSize
+        let mask = ((1<<(32-originalSize))-1)<<originalSize
         return val | mask
     }
     return val
@@ -413,7 +420,7 @@ function EXTS(val, originalSize) {
 function stepCPU() {
     let steps = $(".stepCount").val()
     for(let i = 0; i < steps; i++) {
-        if(!computer.halted()){
+        if(!computer.halt){
             computer.stepOnce()
         }
         else {
@@ -425,8 +432,9 @@ function stepCPU() {
 function restartCPU() {
     let code = readCode();
     computer = new Computer(code)
-    readRegisters(computer)
-    refreshView(computer)
+    readRegisters()
+    initialiseTable()
+    refreshView()
 }
 
 function readCode() {
@@ -445,7 +453,7 @@ function readCode() {
 
 }
 
-function readRegisters(computer) {
+function readRegisters() {
     //add onclick handler to register to make it read as hex instead of dec? keep a class on it using jquery to check it
     var registers = $("#input-side .register") //get all input registers
     for(let i = 0; i < registers.length; i++) {
@@ -458,48 +466,40 @@ function readRegisters(computer) {
         }
     }
 }
+function initialiseTable() {
+    $("#output-side .hex .data").remove()
+    let table = $("#output-side .hex") 
+    for(let i = 0; i < computer.memory.getSize();) {
+        let row = $("<tr>").addClass("data")
+        let id = $("<th>")
+        id.text(i.toString(16).toUpperCase().padStart(4, "0"))
+        row.append(id)
+        for(let j = 0; j < 4; j++) {
+            let value = $("<td>")
+            value.text((computer.memory.getWord(i)>>>0).toString(16).toUpperCase().padStart(8, "0"))
+            if (i == computer.programCounter) {
+                value.addClass("currentCommand")
+            }
+            value.addClass("value")
+            i += 4
+            row.append(value)
+        }
+        table.append(row)
+    }
 
-function refreshView(computer) {
+
+}
+function refreshView() {
     var registers = $("#output-side .register")
     for(let i = 0; i < registers.length; i++) {
         $(registers[i]).val(computer.GPR[i])
     }
-    let memory = computer.memory;
-    let code = `
-                                <tr>
-                                    <th></th>
-                                    <th>0 1 2 3 </th>
-                                    <th>4 5 6 7 </th>
-                                    <th>8 9 A B</th>
-                                    <th>C D E F</th>
-                                </tr>`
-    let count = 0
+    let mem = $("#output-side .hex .data .value")
+    mem.removeClass("currentCommand")
+    $(mem[computer.programCounter/4]).addClass("currentCommand")
 
-
-
-    for(let i = 0; i < memory.getSize(); i+=4) {
-        if (count==0) {
-            code += "<tr>"
-            code += "<th>"
-            code += i.toString(16).toUpperCase().padStart(4, "0")
-            code += "</th>"
-        }
-        code += "<td>"
-        let currentLine = i == computer.programCounter
-        if (currentLine) {
-            code += "<b>"
-        }
-        code += (memory.getWord(i)>>>0).toString(16).toUpperCase().padStart(8, "0");
-        if (currentLine) {
-            code += "</b>"
-        }
-        count++
-        code += "</td>"
-        if (count == 4) {
-            count = 0
-            code += "</tr>"
-        }
+    for(let i = 0; i < computer.memory.getSize(); i += 4) {
+        $(mem[i/4]).text((computer.memory.getWord(i)>>>0).toString(16).toUpperCase().padStart(8, "0"))
     }
-    $("#output-side .hex").html(code)
 }
 restartCPU()
