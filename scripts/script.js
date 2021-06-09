@@ -462,6 +462,7 @@ function readRegisters() {
             computer.GPR[i] = val<<0; //val converted to a 32 bit number using leftshift 0 bits, since bitshifts operate on 32 bit ints only
         }
         else {
+            $(registers[i]).val(0);
             computer.GPR[i] = 0;
         }
     }
