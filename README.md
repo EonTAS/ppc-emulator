@@ -10,6 +10,8 @@ Create a basic power pc assembler emulator that can be used to quick and easy te
 
 3) as a visitor i want to be able to learn a little about how low level operations work through stepping through code line by line
 
+4) as a user i want to be able to watch how memory and registers update as the code is run
+
 # Features :
 
 1) Memory Start
@@ -55,16 +57,22 @@ Create a basic power pc assembler emulator that can be used to quick and easy te
 # Typography and Color Scheme :
 
 
-# Wireframes :
+Background will be a carbon colour, relatively dark.
+Text will be an off-white colour using the Exo and Roboto fonts.
 
-## Home Page:
+
+# Wireframes :
 
 ![Image](/wireframes/asmpage.png)
 
-## Howto Page:
-
-
 # Testing
+
+## register initialisation testing
+
+## basic code testing
+
+## interface interacting testing
+
 
 # Client Story Testing
 
@@ -75,6 +83,30 @@ Create a basic power pc assembler emulator that can be used to quick and easy te
 
 
 # Deployment
+
+I developed this project using [Gitpod IDE](https://gitpod.io/) and a git-repo hosted on GitHub. 
+
+The page is hosted using GitHub Pages by doing the following:
+
+1) Log in
+2) Open Repo
+3) Select Settings
+4) Find the GitHub Pages Section
+5) select the master branch as the source
+6) get link from the page again.
+
+This page can be found [here](https://EonTas.github.io/Mods-Site/.) for the forseeable future.
+
+## How to run locally
+
+To clone you will need a github account or other git client.
+1) Open this link to the [project](https://github.com/EonTAS/Mods-Site/)
+2) Under the repo name, click "clone or download" button.
+3) copy the clone url for the repository.
+4) In your IDE of choice, open the terminal 
+5) set working directory to where you want to clone the repo.
+6) type `git clone` and paste the url from step 3 and press enter.
+
 
 
 # Credits: 
