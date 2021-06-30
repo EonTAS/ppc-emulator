@@ -1,0 +1,32 @@
+#fibonnacci 
+#r3,4,5, are all fibonnaccinumbers at all times
+38600000 #li r3, 0
+38800001 #li r4, 1
+#loop
+7CA32214 #add r5, r3, r4
+7C832378 #mr r3, r4
+7CA42B78 #mr r4, r5
+4BFFFFF4 #b loop
+
+
+#factorial 
+#set r3 to what you want to be factorial'ed, output will be in r3
+7C641B78 #mr r4, r3 #copys r3 into r4
+3863FFFF #subi r3, r3, 1 #subtract 1
+2C030001 #cmpwi r3, 1
+4081000C #ble 0xC
+7C8321D6 #mullw r4, r3, r4
+4BFFFFF0 #b -0x10
+7C832378 #mr r3, r4
+
+#load and store example
+#loads "first arg" and "second arg" from memory, adds them and then stores in "return location"
+3BE00018 #li r31, 0x18
+807F0000 #lwz r3, 0x0(r31)
+809F0004 #lwz r4, 0x4(r31)
+7C632214 #add r3, r3, r4
+907F0008 #stw r3, 0x8(r31)
+00000000
+0000000C #first arg
+00000010 #second arg
+00000000 #return location

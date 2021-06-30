@@ -28,7 +28,12 @@ class Bitfield { //class that allows easier access to the bit representation of 
         let v = (this.value & mask)>>>(this.size-start-size) //creates the unsigned value by then shifting data to the right
         return v
     }
-
+    getValueSignExtended(start = 0, size = -1) {
+        if (size < 0) {
+            size = this.size - start;
+        }
+        return EXTS(this.getValue(start, size), size)
+    }
     
     getSubField(start, size) {
         return new Bitfield(this.getValue(start, size), size)
@@ -184,7 +189,16 @@ class Computer {
         let NIA = CIA + 0x4 //next instruction address
         let args;
         switch(opcode) {
-
+            case 7: { //mulli
+                console.log("   mulli")
+                args = instruction.split([6,11,16], ["D","A", "SIMM"])
+                let D = args["D"].getValue()
+                let A = args["A"].getValue()
+                let SIMM = args["SIMM"].getValue()
+                let prod = this.GPR[A] * SIMM
+                prod = prod<<0
+                this.GPR[D] = prod
+            }
             case 11: { //cmpi
                 
                 console.log("   cmpi")
@@ -218,7 +232,7 @@ class Computer {
                 args = instruction.split([6,11,16], ["D", "A", "SIMM"])
                 let A = args["A"].getValue()
                 let D = args["D"].getValue()
-                let SIMM = EXTS(args["SIMM"].getValue(), 16)
+                let SIMM = args["SIMM"].getValueSignExtended()
                 if (A == 0) {
                     this.GPR[D] = SIMM
                 }
@@ -395,11 +409,95 @@ class Computer {
                 
                         break;
                     }
+                    case 23: {//lwzx
+                        console.log("   lwzx")
+                        let D = args["D"].getValue()
+                        let A = args["A"].getValue()
+                        let B = args["B"].getValue()
+                        let EA = this.GPR[B]
+                        if (A == 0) {
+                            EA += this.GPR[A]
+                        }
+                        this.GPR[D] = this.memory.getWord(EA)
+                        break
+                    }
+                    case 151: {//stwx
+                        console.log("   stwx")
+                        let S = args["D"].getValue()
+                        let A = args["A"].getValue()
+                        let B = args["B"].getValue()
+                        let EA = this.GPR[B]
+                        if (A == 0) {
+                            EA += this.GPR[A]
+                        }
+                        this.memory.setWord(this.GPR[S], EA)
+                        break
+                    }
+                    case 235: {//mullw
+                        console.log("   mullw")
+                        let D = args["D"].getValue()
+                        let A = args["A"].getValue()
+                        let B = args["B"].getValue()
+                        let EA = this.GPR[B]
+
+                        let prod = this.GPR[A] * this.GPR[B]
+                        prod = prod << 0
+                        
+                        this.GPR[D] = prod
+
+                        //there should also be condition register setting but not implemented
+                        break
+                    }
+                    case 444: {// or 
+                        console.log("   or")
+                        let S = args["D"].getValue()
+                        let A = args["A"].getValue()
+                        let B = args["B"].getValue()
+                        
+                        this.GPR[A] = this.GPR[S] | this.GPR[B]
+                        break
+
+                    }
                     default:
                         break;
                 }
                 break;
             }
+            case 32: { //lwz
+                
+                console.log("   lwz")
+                
+                args = instruction.split([6,11,16], ["D", "A", "d"])
+                let D = args["D"].getValue()
+                let A = args["A"].getValue()
+                let d = args["d"].getValueSignExtended()
+                let EA = d
+                if (A != 0) {
+                    EA += this.GPR[A]
+                }
+                this.GPR[D] = this.memory.getWord(EA)
+                
+                break
+
+            }
+            case 36: { //stw
+                
+                console.log("   stw")
+                
+                args = instruction.split([6,11,16], ["S", "A", "d"])
+                let S = args["S"].getValue()
+                let A = args["A"].getValue()
+                let d = args["d"].getValueSignExtended()
+                let EA = d
+                if (A != 0) {
+                    EA += this.GPR[A]
+                }
+                this.memory.setWord(this.GPR[S], EA)
+                
+                break
+
+            }
+
             default: 
                 console.log("   unknown instruction : " + opcode)
                 return false

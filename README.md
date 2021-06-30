@@ -65,6 +65,29 @@ Text will be an off-white colour using the Exo and Roboto fonts.
 
 ![Image](/wireframes/asmpage.png)
 
+# Current State :
+
+all commands implemented in this are as follows : 
+cmpi 
+addi 
+addis 
+bc (blt ble bge bgt beq bne)
+b 
+bcctr 
+add
+addc
+adde 
+cmp
+lwz 
+stw 
+lwzx 
+stwx 
+mulli 
+mullw
+or
+
+This is tiny in comparison to the full instruction set of PPC, but it is sufficient for any small programs and  
+
 # Testing
 
 ## register initialisation testing
