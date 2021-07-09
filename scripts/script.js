@@ -527,7 +527,7 @@ function stepCPU() {
     }
     refreshView(computer)
 }
-function restartCPU() {
+function restartCPU() {    
     let code = readCode();
     computer = new Computer(code)
     readRegisters()
@@ -602,3 +602,20 @@ function refreshView() {
     }
 }
 restartCPU()
+$(".stepCount").on("change", function() {
+    let v = this.value
+    if (v < this.min) {
+        this.value = this.min
+        alert("Step value must be >= " + this.min)
+    }
+    else if (v > this.max) {
+        this.value = this.max
+        alert("Step value must be <= " + this.max)
+    }
+    else {
+        this.value = Math.floor(v)
+        if(this.value != v) {
+            alert("Step value must be a whole number")
+        }
+    }
+})
