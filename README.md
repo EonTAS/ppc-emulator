@@ -86,16 +86,68 @@ mulli
 mullw
 or
 
-This is tiny in comparison to the full instruction set of PPC, but it is sufficient for any small programs and  
+This is tiny in comparison to the full instruction set of PPC, but it is sufficient for any small programs and allows a base framework to play with.
+
+A couple of these instructions are intended to set flags as they happen (or have a varient to perform the same action but with flag setting on top). These mostly went unimplemented, such as `or` not setting any flag for its results. Instructions that set compare registers flags on top of their base functionality are as follows : 
+cmpi
+cmp
+add
+addc
+adde
+
+(technically cmpi and cmp the setting flags is their entire functionality, not just a side-effect).
 
 # Testing
 
-## register initialisation testing
+## register testing
+![Image](/testingImages/registers_1.png)
+
+when everything is opened at first, every input register on the left is defaulted to blank. This is then all immediately read and interpretted in the output registers as all 0's. 
+
+Using the default program that loads when you open the page, I can step forwards and registers values update according each step as expected
+
+![Image](/testingImages/registers_2.png)
+
+When Input registers are set to a value, nothing on the output changes until Go is pressed, at which point the values specified for specific registers are updated as expected: 
+
+![Image](/testingImages/registers_3.png)
+
 
 ## basic code testing
 
+A few example functions are included in the file exampleFunctions.txt that demonstrate functionality of actual opcodes is working as intended. I will attempt to show this without going in depth into every command.
+
+# fibonnacci 
+
+# factorial 
+
+# load store example with no good name 
+
+
+
 ## interface interacting testing
 
+currrent command highlighting
+
+steps correctly do commands
+
+Following image shows the command at 0004 is the current command, as it is highlighted:
+
+![Image](/testingImages/steps_1.png)
+
+When one step of the program is run by pressing the top of the screen, this progresses one forwards, unhighlighting 0004 and highlighting 0008
+
+![Image](/testingImages/steps_2.png)
+
+Using the step size option on the page correctly changes how far each step goes. When at setting of 1, it visually goes command by command. At setting 2, it visually skips a command each time. At 3, it looks like its going backwards in the 4-command loop of the default example program. And at 4 it visually stays in place while registers update for each loop.
+
+![Step Sizes](/testingImages/steps_4.gif)
+
+Stepsize Limits: 
+Minimum and Maximum values of step size were set to 1 and 999 respectively. This is intended to be only integers since it is a count of acts.
+I NEED POPUP ERROR IF STEPS SET TOO BIG OR SMALL OR NON-Int
+
+Step size can only be a positive integer, if an invalid value is input, a popup is produced as would be expected.
 
 # Client Story Testing
 
