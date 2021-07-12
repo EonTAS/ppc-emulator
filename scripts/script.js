@@ -320,7 +320,7 @@ class Computer {
             case 24: { //OR immediate ori
                 console.log("   ori")
                 args = instruction.split([6,11,16], ["S", "A", "UIMM"])
-                let S = args["s"].getValue()
+                let S = args["S"].getValue()
                 let A = args["A"].getValue()
                 let UIMM = args["UIMM"].getValue()
                 
