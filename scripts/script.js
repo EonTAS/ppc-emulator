@@ -317,6 +317,17 @@ class Computer {
                 }
                 break
             }
+            case 24: { //OR immediate ori
+                console.log("   ori")
+                args = instruction.split([6,11,16], ["S", "A", "UIMM"])
+                let S = args["D"].getValue()
+                let A = args["A"].getValue()
+                let UIMM = args["UIMM"].getValue()
+                
+                this.GPR[A] = this.GPR[S] | UIMM
+                break
+
+            }
             case 31: {//everything else - add, addc, adde, cmp
                 args = instruction.split([6,11,16,21,22,31], ["D", "A", "B", "OE", "type", "Rc"])
                 var type = args["type"].getValue()

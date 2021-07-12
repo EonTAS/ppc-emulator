@@ -85,6 +85,7 @@ stwx
 mulli 
 mullw
 or
+ori
 
 This is tiny in comparison to the full instruction set of PPC, but it is sufficient for any small programs and allows a base framework to play with.
 
