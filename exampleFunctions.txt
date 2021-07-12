@@ -30,3 +30,38 @@
 0000000C #first arg
 00000010 #second arg
 00000000 #return location
+
+
+function call attempt
+    bl function
+    nop
+
+function:
+    subi r1, r1, 0x30
+    mflr r0
+    stw r0, 0x4(r1)
+    bl one
+    stw r3, 0x10(r1)
+    bl two
+    lwz r4, 0x10(r1)
+    add r3, r3, r4
+    lwz r0, 0x4(r1)
+    mtlr r0
+    addi r1, r1, 0x30
+    blr
+one:
+    li r3, 1
+    blr 
+two:
+    li r3, 2
+    blr
+
+48000009 00000000
+3821FFD0 7C0802A6
+90010004 48000025
+90610010 48000025
+80810010 7C632214
+80010004 7C0803A6
+38210030 4E800020
+38600001 4E800020
+38600002 4E800020

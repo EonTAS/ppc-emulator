@@ -120,7 +120,7 @@ class Memory { //stores all data in the computer memory as single bytes so that 
 
     getAddr(addr) {        
         addr = addr%this.size
-        if (addr<this.size) {
+        if (addr<0) {
             addr = addr+this.size
         }
         return addr
@@ -298,18 +298,20 @@ class Computer {
             }
             case 19: { //branch conditional to count register
                 
-                console.log("   bcctr")
+                console.log("   bcctr/bclr")
                 
-                args = instruction.split([6,11,16,21, 30,31], ["BO", "BI", "0", "type", "LK"])
-                let cond_ok = (args["BO"].getBit(0)) | (this.CR.getBit(args["BI"].getValue()) == args["BO"].getBit(1))
+                args = instruction.split([6,11,16,21,31], ["BO", "BI", "0", "type", "LK"])
+                let cond_ok = (args["BO"].getBit(0)) | (this.CR[0].getBit(args["BI"].getValue()) == args["BO"].getBit(1))
                 if (cond_ok) {
                     let type = args["type"].getValue()
+                    console.log(type)
                     if (type == 528){
-                        NIA = this.ctr<<2
+                        NIA = this.ctr
+                        console.log("   conditional branch to count register 0x" + NIA)
                     } else if (type == 16) {
-                        NIA = this.lr<<2
+                        NIA = this.lr
+                        console.log("   conditional branch to link register 0x" + NIA)
                     }
-                    console.log("   conditional branch to count register 0x" + this.ctr.toString(16))
                     if (args["LK"].getValue()) {
                         this.lr = CIA + 4
                         console.log("   set lr to 0x" + this.lr.toString(16))
@@ -449,7 +451,6 @@ class Computer {
                         let D = args["D"].getValue()
                         let A = args["A"].getValue()
                         let B = args["B"].getValue()
-                        let EA = this.GPR[B]
 
                         let prod = this.GPR[A] * this.GPR[B]
                         prod = prod << 0
@@ -468,6 +469,41 @@ class Computer {
                         this.GPR[A] = this.GPR[S] | this.GPR[B]
                         break
 
+                    }
+                    case 467: { //mtspr
+                        console.log("   mtspr")
+                        let S = this.GPR[args["D"].getValue()]
+                        let spr = args["A"].getValue()
+                        if (spr == 1) {
+                            console.log("   XER")
+                            this.XER = (new Bitfield(S,32)).split([0,1,2,3,25],["SO", "OV", "CA", "0", "Byte Count"])
+                        } 
+                        else if (spr == 8) {//lr 
+                            console.log("   LR")
+                            this.lr = S
+                        }
+                        else if (spr == 9) {//ctr 
+                            console.log("   CTR")
+                            this.ctr = S
+                        }
+                        break
+                    }
+                    case 339: { //mfspr
+                        console.log("   mfspr")
+                        let S = args["D"].getValue()
+                        let spr = args["A"].getValue()
+                        if (spr == 1) {
+                            console.log("   XER")
+                            this.GPR[S] = this.XER.getValue()
+                        } 
+                        else if (spr == 8) {//lr 
+                            console.log("   LR")
+                            this.GPR[S] = this.lr
+                        }
+                        else if (spr == 9) {//ctr 
+                            console.log("   CTR")
+                            this.GPR[S] = this.ctr
+                        }
                     }
                     default:
                         break;

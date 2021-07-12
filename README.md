@@ -54,6 +54,10 @@ Create a basic power pc assembler emulator that can be used to quick and easy te
 
     once this is done as a small project, i plan to incrementally increase the implemented instruction set so this can be used to write more complicated codes.
 
+4) spoof function calls
+
+    allow branching to invalid memory addresses that have preset functionality or user defined return values, so a code can call a function and pretend it recieved a response to continue running with instead of crashing from branching outside the memory of the emulator
+
 # Typography and Color Scheme :
 
 
