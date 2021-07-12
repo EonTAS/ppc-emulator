@@ -112,6 +112,23 @@ When Input registers are set to a value, nothing on the output changes until Go 
 
 ![Image](/testingImages/registers_3.png)
 
+# Integer Overflow: 
+
+All registers are intended to only contain a 32 bit integer. Javascript stores all integers as floating point values, so enforcing the 32 bit value limit had to be done in code. Conveniently javascript bitwise operators convert the value into a 32 bit value and back to perform their operations, so a bitshift right 0 bits forces all values to always stay within the 32 bit bounds. 
+
+The highest positive integer can be represented as 0x7FFFFFFF, 2147483647 in decimal, and you can see this correctly transfers over.
+
+![Image](/testingImages/overflow_1.png)
+
+The lowest negative number can be represented as 0x80000000, -2147483648 in decimal, and you can see this correctly transfers over.
+
+![Image](/testingImages/overflow_2.png)
+
+![Image](/testingImages/overflow_4.png)
+
+Any value equal to or above 0x100000000 is too large to be represented in 32 bits. If a value is above this range, only the first 32 bits of the number are used, so for example 0x100000002 = 2.
+
+![Image](/testingImages/overflow_3.png)
 
 ## basic code testing
 
@@ -119,11 +136,39 @@ A few example functions are included in the file exampleFunctions.txt that demon
 
 # fibonnacci 
 
+Demonstrates functionality of branch, li, mr and add.
+
+This example code calculates the fibonacci sequence in 3 of the registers on the output side, infinitely looping. 
+
+The first 2 commands load initial values into output registers 3 and 4. 
+
+![Image](/testingImages/fib_1.png)
+
+The third command is an add, showing adding r3 and r4 and storing value into r5. 
+
+![Image](/testingImages/fib_2.png)
+
+The next two commands are mr commands, which copy registers into other positions. 
+
+![Image](/testingImages/fib_3.png)
+
+The last command changes where the program counter is, moving execution back to the add command. 
+
+![Image](/testingImages/fib_4.png)
+
+After stepping a fair bit, the values seen are still fibonnacci numbers, so it is working correctly.
+
+![Image](/testingImages/fib_5.png)
+
 # factorial 
+
+shows off multiply, compare, conditional branch. 
+
+
 
 # load store example with no good name 
 
-
+shows off load word and store word.
 
 ## interface interacting testing
 
@@ -144,8 +189,7 @@ Using the step size option on the page correctly changes how far each step goes.
 ![Step Sizes](/testingImages/steps_4.gif)
 
 Stepsize Limits: 
-Minimum and Maximum values of step size were set to 1 and 999 respectively. This is intended to be only integers since it is a count of acts.
-I NEED POPUP ERROR IF STEPS SET TOO BIG OR SMALL OR NON-Int
+Minimum and Maximum values of step size were set to 1 and 999 respectively. This is intended to be only integers since it is a count of acts. I was under the belief these limitations came with the `input type=number` but actual code had to be added to validate the values correctly.
 
 Step size can only be a positive integer, if an invalid value is input, a popup is produced as would be expected.
 
