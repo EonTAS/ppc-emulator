@@ -27,10 +27,13 @@
 7C632214 #add r3, r3, r4
 907F0008 #stw r3, 0x8(r31)
 00000000
-0000000C #first arg
-00000010 #second arg
-00000000 #return location
+0000000C #first arg = 12
+00000010 #second arg = 16
+00000000 #return location = result = 28 = 0x1C
 
+
+Below is a test function I wrote where i performed multiple function calls using bl, and used appropriate steps to store the values to the stack so that function calls are performed as intended.
+This is not shown in the readme, but the chunk of hex below it is the input to the program and does correctly make the final result of r3 = 3 with stack correctly returned to its initial value.
 
 function call attempt
     bl function

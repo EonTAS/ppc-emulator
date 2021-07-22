@@ -58,11 +58,16 @@ Create a basic power pc assembler emulator that can be used to quick and easy te
 
     allow branching to invalid memory addresses that have preset functionality or user defined return values, so a code can call a function and pretend it recieved a response to continue running with instead of crashing from branching outside the memory of the emulator
 
+5) toggle number formatting of values 
+
+    allow clicking a button to change from reading a value as hex to decimal to binary etc.
+
+
 # Typography and Color Scheme :
 
 
-Background will be a carbon colour, relatively dark.
-Text will be an off-white colour using the Exo and Roboto fonts.
+Background will be a a light grey on the input side and a dark grey on the output side.
+Text will be an off-black colour on input and off-white on output, using Roboto/Roboto Mono for text where it is required to be monospaced. 
 
 
 # Wireframes :
@@ -169,17 +174,45 @@ After stepping a fair bit, the values seen are still fibonnacci numbers, so it i
 
 shows off multiply, compare, conditional branch. 
 
+After factorial is loaded in, the program loops over the value, subtracting 1 from it each time, multiplying the result register (r4) with the value, until the multiplier is 1 and stopping.
 
+Example with intial value of r3 = 4
+
+![Image](/testingImages/factorial_1.png)
+
+Stepping forwards 5 times shows the current command reaching 0x14 memory address, passing the conditional branch at 000C. 
+
+![Image](/testingImages/factorial_2.png)
+
+Once the value contained in r3 = 1, the check found at 000C succeeds and instead of progressing to the multiply found at 0010, it jumps directly to 0018 where the contents of r4 (the final result) is copied into r3 since that is the usual "return" register in a program
+
+![Image](/testingImages/factorial_3.png)
+
+Here you can see the final result of the 4! I started with is 24, which is the correct value.
+
+![Image](/testingImages/factorial_4.png)
+
+Since this emulator is emulating a 32 bit integer, it cant store any value over 2^32, beginning to loop around. A small consequence of this I would like to point out is that this means any factorial calculated >= 34! will result in a value of 0, since any factorial greater than that will have factors of all even numbers up to and including 34. This results in 32 individual factors of 2 meaning 2^32 is a factor of all factorials >=34!
+
+Since storing values in 32 bit values means storing the value modulo 2^32, anything with a factor of 2^32 will result in a value 0, so all factorials >=34! will return 0.
+
+![Image](/testingImages/factorial_34.png)
+
+This wasnt entirely relevant to the project, I just thought it was an interesting observation.
 
 # load store example with no good name 
 
-shows off load word and store word.
+This is just a small example of loading values from memory, manipulating them, and then storing to memory again. 
+
+The base example loading the first value of 0000000C (12) and a second value of 00000010 (16), adds them together, and stores the result 0000001C (28) back into memory
+
+Below I circled the result value of the calculation stored back into the memory.
+
+![Image](/testingImages/lwzstw_1.png)
 
 ## interface interacting testing
 
-currrent command highlighting
-
-steps correctly do commands
+As shown in previous examples, the current command being run is highlighted in red. 
 
 Following image shows the command at 0004 is the current command, as it is highlighted:
 
@@ -198,12 +231,32 @@ Minimum and Maximum values of step size were set to 1 and 999 respectively. This
 
 Step size can only be a positive integer, if an invalid value is input, a popup is produced as would be expected.
 
+![Step Sizes](/testingImages/stepLimit_1.png)
+
+![Step Sizes](/testingImages/stepLimit_2.png)
+
 # Client Story Testing
 
 
-# Lighthouse: 
+1) Memory Start
 
-# Others:
+
+2) Registers start
+
+
+3) emulator start
+
+
+4) emulation
+
+
+5) play/step
+
+
+6) limited instruction set 
+
+
+# Lighthouse: 
 
 
 # Deployment
@@ -219,12 +272,12 @@ The page is hosted using GitHub Pages by doing the following:
 5) select the master branch as the source
 6) get link from the page again.
 
-This page can be found [here](https://EonTas.github.io/Mods-Site/.) for the forseeable future.
+This page can be found [here](https://eontas.github.io/ppc-emulator/.) for the forseeable future.
 
 ## How to run locally
 
 To clone you will need a github account or other git client.
-1) Open this link to the [project](https://github.com/EonTAS/Mods-Site/)
+1) Open this link to the [project](https://github.com/EonTAS/ppc-emulator/)
 2) Under the repo name, click "clone or download" button.
 3) copy the clone url for the repository.
 4) In your IDE of choice, open the terminal 
