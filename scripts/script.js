@@ -28,7 +28,7 @@ class Bitfield { //class that allows easier access to the bit representation of 
         let v = (this.value & mask)>>>(this.size-start-size) //creates the unsigned value by then shifting data to the right
         return v
     }
-    getValueSignExtended(start = 0, size = -1) {
+    getValueSignExtended(start = 0, size = -1) { //same as getValue but extends the sign bit of any given number to make it interpret as a negative value when appropriate
         if (size < 0) {
             size = this.size - start;
         }
@@ -70,12 +70,13 @@ class Memory { //stores all data in the computer memory as single bytes so that 
     constructor(size) {
         this.size = size;
         this.contents = [];
-        for (let i = 0; i < size; i++){
+        for (let i = 0; i < size; i++){ //initialises memory block as all zeros
             this.contents.push(0)
         }
     }
-
-    setWord(val, addr) {
+    
+    //since memory is stored as bytes, when writing or reading a value, the appropriate part of the number needs to be extracted using bitmasks and shifts
+    setWord(val, addr) { 
         addr = this.getAddr(addr)      
         this.contents[addr+0] = (val&0xFF000000)>>>24
         this.contents[addr+1] = (val&0x00FF0000)>>>16
@@ -118,6 +119,7 @@ class Memory { //stores all data in the computer memory as single bytes so that 
         return this.size
     }
 
+    //converts a passed address into a valid address within the memory
     getAddr(addr) {        
         addr = addr%this.size
         if (addr<0) {
@@ -164,15 +166,16 @@ class Computer {
         this.programCounter = 0;
         
 
-        
+        //initialises memory with the program passed in
         for (let i = 0; i < program.length; i++) {
             this.memory.setWord(parseInt(program[i], 16), 4*i)
         }
 
-        //this.GPR[1] = this.memory.getSize()-0x10;
         this.halt = false
         console.log(this.memory)
     }
+
+    //runs one instruction forwards, setting a halt flag if it fails
     stepOnce() {
         console.log("PC = 0x" + this.programCounter.toString(16))
         let instruction = new Bitfield(this.memory.getWord(this.programCounter), 32)
@@ -181,6 +184,7 @@ class Computer {
         }
     }
     
+    //executes the passed instruction
     step(instruction) {
         console.log("   current instruction : " + instruction.getValue().toString(16))
         let opcode = instruction.getValue(0,6)
@@ -192,11 +196,11 @@ class Computer {
             case 7: { //mulli
                 console.log("   mulli")
                 args = instruction.split([6,11,16], ["D","A", "SIMM"])
-                let D = args["D"].getValue()
-                let A = args["A"].getValue()
-                let SIMM = args["SIMM"].getValue()
+                let D = args["D"].getValue() //gets output register number from instruction
+                let A = args["A"].getValue() //gets input register number from instruction
+                let SIMM = args["SIMM"].getValue() //gets multiplier from instruction
                 let prod = this.GPR[A] * SIMM
-                prod = prod<<0
+                prod = prod<<0 //makes sure value is a 32 bit value
                 this.GPR[D] = prod
             }
             case 11: { //cmpi

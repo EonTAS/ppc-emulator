@@ -23,11 +23,12 @@
     <section class="container-fluid">
         <div class="row">
             <div class="col-md-6 side" id="input-side">
-                <div class="row">
+                    
+                <form class="row">
                     <div class="col-6">
-                        <div class="row">
+                        <label for="inputHex" class="row">
                             Input Default values of registers and include memory state here and then press Go
-                        </div>
+                        </label>
                         <div class="row">
                             <button onclick="restartCPU()">
                                 Go
@@ -46,73 +47,106 @@
                         </div>
 
                     </div>
-                    <div class="registers col-6 ">
-                        r0 : <input name="r0" class="register" type="text" maxlength="255">
+                    <div class="registers col-6"> 
+                        
+                        <label for="r0">r0 : </label>
+                        <input name="r0" id="r0" class="register" type="text" maxlength="255">
                         <br>
-                        r1 : <input name="r1" class="register" type="text" maxlength="255">
+                        <label for="r1">r1 : </label>
+                        <input name="r1" id="r1" class="register" type="text" maxlength="255">
                         <br>
-                        r2 : <input name="r2" class="register" type="text" maxlength="255">
+                        <label for="r2">r2 : </label>
+                        <input name="r2" id="r2" class="register" type="text" maxlength="255">
                         <br>
-                        r3 : <input name="r3" class="register" type="text" maxlength="255">
+                        <label for="r3">r3 : </label>
+                        <input name="r3" id="r3" class="register" type="text" maxlength="255">
                         <br>
-                        r4 : <input name="r4" class="register" type="text" maxlength="255">
+                        <label for="r4">r4 : </label>
+                        <input name="r4" id="r4" class="register" type="text" maxlength="255">
                         <br>
-                        r5 : <input name="r5" class="register" type="text" maxlength="255">
+                        <label for="r5">r5 : </label>
+                        <input name="r5" id="r5" class="register" type="text" maxlength="255">
                         <br>
-                        r6 : <input name="r6" class="register" type="text" maxlength="255">
+                        <label for="r6">r6 : </label>
+                        <input name="r6" id="r6" class="register" type="text" maxlength="255">
                         <br>
-                        r7 : <input name="r7" class="register" type="text" maxlength="255">
+                        <label for="r7">r7 : </label>
+                        <input name="r7" id="r7" class="register" type="text" maxlength="255">
                         <br>
-                        r8 : <input name="r8" class="register" type="text" maxlength="255">
+                        <label for="r8">r8 : </label>
+                        <input name="r8" id="r8" class="register" type="text" maxlength="255">
                         <br>
-                        r9 : <input name="r9" class="register" type="text" maxlength="255">
+                        <label for="r9">r9 : </label>
+                        <input name="r9" id="r9" class="register" type="text" maxlength="255">
                         <br>
-                        r10 : <input name="r10" class="register" type="text" maxlength="255">
+                        <label for="r10">r10 : </label>
+                        <input name="r10" id="r10" class="register" type="text" maxlength="255">
                         <br>
-                        r11 : <input name="r11" class="register" type="text" maxlength="255">
+                        <label for="r11">r11 : </label>
+                        <input name="r11" id="r11" class="register" type="text" maxlength="255">
                         <br>
-                        r12 : <input name="r12" class="register" type="text" maxlength="255">
+                        <label for="r12">r12 : </label>
+                        <input name="r12" id="r12" class="register" type="text" maxlength="255">
                         <br>
-                        r13 : <input name="r13" class="register" type="text" maxlength="255">
+                        <label for="r13">r13 : </label>
+                        <input name="r13" id="r13" class="register" type="text" maxlength="255">
                         <br>
-                        r14 : <input name="r14" class="register" type="text" maxlength="255">
+                        <label for="r14">r14 : </label>
+                        <input name="r14" id="r14" class="register" type="text" maxlength="255">
                         <br>
-                        r15 : <input name="r15" class="register" type="text" maxlength="255">
+                        <label for="r15">r15 : </label>
+                        <input name="r15" id="r15" class="register" type="text" maxlength="255">
                         <br>
-                        r16 : <input name="r16" class="register" type="text" maxlength="255">
+                        <label for="r16">r16 : </label>
+                        <input name="r16" id="r16" class="register" type="text" maxlength="255">
                         <br>
-                        r17 : <input name="r17" class="register" type="text" maxlength="255">
+                        <label for="r17">r17 : </label>
+                        <input name="r17" id="r17" class="register" type="text" maxlength="255">
                         <br>
-                        r18 : <input name="r18" class="register" type="text" maxlength="255">
+                        <label for="r18">r18 : </label>
+                        <input name="r18" id="r18" class="register" type="text" maxlength="255">
                         <br>
-                        r19 : <input name="r19" class="register" type="text" maxlength="255">
+                        <label for="r19">r19 : </label>
+                        <input name="r19" id="r19" class="register" type="text" maxlength="255">
                         <br>
-                        r20 : <input name="r20" class="register" type="text" maxlength="255">
+                        <label for="r20">r20 : </label>
+                        <input name="r20" id="r20" class="register" type="text" maxlength="255">
                         <br>
-                        r21 : <input name="r21" class="register" type="text" maxlength="255">
+                        <label for="r21">r21 : </label>
+                        <input name="r21" id="r21" class="register" type="text" maxlength="255">
                         <br>
-                        r22 : <input name="r22" class="register" type="text" maxlength="255">
+                        <label for="r22">r22 : </label>
+                        <input name="r22" id="r22" class="register" type="text" maxlength="255">
                         <br>
-                        r23 : <input name="r23" class="register" type="text" maxlength="255">
+                        <label for="r23">r23 : </label>
+                        <input name="r23" id="r23" class="register" type="text" maxlength="255">
                         <br>
-                        r24 : <input name="r24" class="register" type="text" maxlength="255">
+                        <label for="r24">r24 : </label>
+                        <input name="r24" id="r24" class="register" type="text" maxlength="255">
                         <br>
-                        r25 : <input name="r25" class="register" type="text" maxlength="255">
+                        <label for="r25">r25 : </label>
+                        <input name="r25" id="r25" class="register" type="text" maxlength="255">
                         <br>
-                        r26 : <input name="r26" class="register" type="text" maxlength="255">
+                        <label for="r26">r26 : </label>
+                        <input name="r26" id="r26" class="register" type="text" maxlength="255">
                         <br>
-                        r27 : <input name="r27" class="register" type="text" maxlength="255">
+                        <label for="r27">r27 : </label>
+                        <input name="r27" id="r27" class="register" type="text" maxlength="255">
                         <br>
-                        r28 : <input name="r28" class="register" type="text" maxlength="255">
+                        <label for="r28">r28 : </label>
+                        <input name="r28" id="r28" class="register" type="text" maxlength="255">
                         <br>
-                        r29 : <input name="r29" class="register" type="text" maxlength="255">
+                        <label for="r29">r29 : </label>
+                        <input name="r29" id="r29" class="register" type="text" maxlength="255">
                         <br>
-                        r30 : <input name="r30" class="register" type="text" maxlength="255">
+                        <label for="r30">r30 : </label>
+                        <input name="r30" id="r30" class="register" type="text" maxlength="255">
                         <br>
-                        r31 : <input name="r31" class="register" type="text" maxlength="255">
+                        <label for="r31">r31 : </label>
+                        <input name="r31" id="r31" class="register" type="text" maxlength="255">
                         <br>
                     </div>
-                </div>
+                </form>
 
             </div>
             <div class="col-md-6 side" id="output-side">
@@ -125,9 +159,12 @@
                             <button onclick="stepCPU()">
                                 Step forward n steps
                             </button>
-                            <div class="stepContainer">
-                                n : <input name="stepCount" class="stepCount" type="number" min = "1" max="999" value="1">
-                            </div>
+                            <form class="stepContainer">
+                                <label for="stepCount">
+                                    n : 
+                                </label> 
+                                <input name="stepCount" id = "stepCount" class="stepCount" type="number" min = "1" max="999" value="1">
+                            </form>
                         </div>
                         <div class="row">
                             <table id="output-hex" class="hex">
@@ -149,73 +186,105 @@
                         </div>
 
                     </div>
-                    <div class="registers col-12 col-sm-4 col-md-12 col-xl-4"> 
+                    <form class="registers col-12 col-sm-4 col-md-12 col-xl-4"> 
                         
-                        r0 : <input name="r0" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr0">r0 : </label>
+                        <input name="r0" id="outputr0" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r1 : <input name="r1" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr1">r1 : </label>
+                        <input name="r1" id="outputr1" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r2 : <input name="r2" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr2">r2 : </label>
+                        <input name="r2" id="outputr2" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r3 : <input name="r3" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr3">r3 : </label>
+                        <input name="r3" id="outputr3" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r4 : <input name="r4" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr4">r4 : </label>
+                        <input name="r4" id="outputr4" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r5 : <input name="r5" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr5">r5 : </label>
+                        <input name="r5" id="outputr5" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r6 : <input name="r6" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr6">r6 : </label>
+                        <input name="r6" id="outputr6" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r7 : <input name="r7" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr7">r7 : </label>
+                        <input name="r7" id="outputr7" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r8 : <input name="r8" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr8">r8 : </label>
+                        <input name="r8" id="outputr8" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r9 : <input name="r9" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr9">r9 : </label>
+                        <input name="r9" id="outputr9" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r10 : <input name="r10" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr10">r10 : </label>
+                        <input name="r10" id="outputr10" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r11 : <input name="r11" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr11">r11 : </label>
+                        <input name="r11" id="outputr11" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r12 : <input name="r12" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr12">r12 : </label>
+                        <input name="r12" id="outputr12" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r13 : <input name="r13" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr13">r13 : </label>
+                        <input name="r13" id="outputr13" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r14 : <input name="r14" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr14">r14 : </label>
+                        <input name="r14" id="outputr14" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r15 : <input name="r15" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr15">r15 : </label>
+                        <input name="r15" id="outputr15" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r16 : <input name="r16" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr16">r16 : </label>
+                        <input name="r16" id="outputr16" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r17 : <input name="r17" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr17">r17 : </label>
+                        <input name="r17" id="outputr17" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r18 : <input name="r18" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr18">r18 : </label>
+                        <input name="r18" id="outputr18" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r19 : <input name="r19" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr19">r19 : </label>
+                        <input name="r19" id="outputr19" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r20 : <input name="r20" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr20">r20 : </label>
+                        <input name="r20" id="outputr20" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r21 : <input name="r21" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr21">r21 : </label>
+                        <input name="r21" id="outputr21" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r22 : <input name="r22" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr22">r22 : </label>
+                        <input name="r22" id="outputr22" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r23 : <input name="r23" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr23">r23 : </label>
+                        <input name="r23" id="outputr23" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r24 : <input name="r24" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr24">r24 : </label>
+                        <input name="r24" id="outputr24" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r25 : <input name="r25" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr25">r25 : </label>
+                        <input name="r25" id="outputr25" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r26 : <input name="r26" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr26">r26 : </label>
+                        <input name="r26" id="outputr26" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r27 : <input name="r27" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr27">r27 : </label>
+                        <input name="r27" id="outputr27" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r28 : <input name="r28" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr28">r28 : </label>
+                        <input name="r28" id="outputr28" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r29 : <input name="r29" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr29">r29 : </label>
+                        <input name="r29" id="outputr29" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r30 : <input name="r30" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr30">r30 : </label>
+                        <input name="r30" id="outputr30" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                        r31 : <input name="r31" class="register" type="text" maxlength="255" readonly="readonly">
+                        <label for="outputr31">r31 : </label>
+                        <input name="r31" id="outputr31" class="register" type="text" maxlength="255" readonly="readonly">
                         <br>
-                    </div>
+                    </form>
                 </div>
 
             </div>

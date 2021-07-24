@@ -72,7 +72,7 @@ Text will be an off-black colour on input and off-white on output, using Roboto/
 
 # Wireframes :
 
-![Image](/wireframes/asmpage.png)
+![Wireframe](/wireframes/asmpage.png)
 
 # Current State :
 
@@ -110,17 +110,17 @@ adde
 # Testing
 
 ## register testing
-![Image](/testingImages/registers_1.png)
+![Default Registers](/testingImages/registers_1.png)
 
 when everything is opened at first, every input register on the left is defaulted to blank. This is then all immediately read and interpretted in the output registers as all 0's. 
 
 Using the default program that loads when you open the page, I can step forwards and registers values update according each step as expected
 
-![Image](/testingImages/registers_2.png)
+![Setting Register value](/testingImages/registers_2.png)
 
 When Input registers are set to a value, nothing on the output changes until Go is pressed, at which point the values specified for specific registers are updated as expected: 
 
-![Image](/testingImages/registers_3.png)
+![Register Value passes over](/testingImages/registers_3.png)
 
 # Integer Overflow: 
 
@@ -128,17 +128,17 @@ All registers are intended to only contain a 32 bit integer. Javascript stores a
 
 The highest positive integer can be represented as 0x7FFFFFFF, 2147483647 in decimal, and you can see this correctly transfers over.
 
-![Image](/testingImages/overflow_1.png)
+![Highest Value](/testingImages/overflow_1.png)
 
 The lowest negative number can be represented as 0x80000000, -2147483648 in decimal, and you can see this correctly transfers over.
 
-![Image](/testingImages/overflow_2.png)
+![Lowest Value](/testingImages/overflow_2.png)
 
-![Image](/testingImages/overflow_4.png)
+![Minus 1](/testingImages/overflow_4.png)
 
 Any value equal to or above 0x100000000 is too large to be represented in 32 bits. If a value is above this range, only the first 32 bits of the number are used, so for example 0x100000002 = 2.
 
-![Image](/testingImages/overflow_3.png)
+![Overflow value](/testingImages/overflow_3.png)
 
 ## basic code testing
 
@@ -152,23 +152,23 @@ This example code calculates the fibonacci sequence in 3 of the registers on the
 
 The first 2 commands load initial values into output registers 3 and 4. 
 
-![Image](/testingImages/fib_1.png)
+![fibomnacci start](/testingImages/fib_1.png)
 
 The third command is an add, showing adding r3 and r4 and storing value into r5. 
 
-![Image](/testingImages/fib_2.png)
+![fibonnacci add](/testingImages/fib_2.png)
 
 The next two commands are mr commands, which copy registers into other positions. 
 
-![Image](/testingImages/fib_3.png)
+![fibonnacci copy](/testingImages/fib_3.png)
 
 The last command changes where the program counter is, moving execution back to the add command. 
 
-![Image](/testingImages/fib_4.png)
+![fibonnacci loop](/testingImages/fib_4.png)
 
 After stepping a fair bit, the values seen are still fibonnacci numbers, so it is working correctly.
 
-![Image](/testingImages/fib_5.png)
+![fibonnacci long repeat](/testingImages/fib_5.png)
 
 # factorial 
 
@@ -178,25 +178,25 @@ After factorial is loaded in, the program loops over the value, subtracting 1 fr
 
 Example with intial value of r3 = 4
 
-![Image](/testingImages/factorial_1.png)
+![factorial 4!](/testingImages/factorial_1.png)
 
 Stepping forwards 5 times shows the current command reaching 0x14 memory address, passing the conditional branch at 000C. 
 
-![Image](/testingImages/factorial_2.png)
+![factorial conditional jump](/testingImages/factorial_2.png)
 
 Once the value contained in r3 = 1, the check found at 000C succeeds and instead of progressing to the multiply found at 0010, it jumps directly to 0018 where the contents of r4 (the final result) is copied into r3 since that is the usual "return" register in a program
 
-![Image](/testingImages/factorial_3.png)
+![factorial conditional jump 2](/testingImages/factorial_3.png)
 
 Here you can see the final result of the 4! I started with is 24, which is the correct value.
 
-![Image](/testingImages/factorial_4.png)
+![factorial 24](/testingImages/factorial_4.png)
 
 Since this emulator is emulating a 32 bit integer, it cant store any value over 2^32, beginning to loop around. A small consequence of this I would like to point out is that this means any factorial calculated >= 34! will result in a value of 0, since any factorial greater than that will have factors of all even numbers up to and including 34. This results in 32 individual factors of 2 meaning 2^32 is a factor of all factorials >=34!
 
 Since storing values in 32 bit values means storing the value modulo 2^32, anything with a factor of 2^32 will result in a value 0, so all factorials >=34! will return 0.
 
-![Image](/testingImages/factorial_34.png)
+![factorial 2^32 quirk](/testingImages/factorial_34.png)
 
 This wasnt entirely relevant to the project, I just thought it was an interesting observation.
 
@@ -208,7 +208,7 @@ The base example loading the first value of 0000000C (12) and a second value of 
 
 Below I circled the result value of the calculation stored back into the memory.
 
-![Image](/testingImages/lwzstw_1.png)
+![load word](/testingImages/lwzstw_1.png)
 
 ## interface interacting testing
 
@@ -216,11 +216,11 @@ As shown in previous examples, the current command being run is highlighted in r
 
 Following image shows the command at 0004 is the current command, as it is highlighted:
 
-![Image](/testingImages/steps_1.png)
+![Highlighting](/testingImages/steps_1.png)
 
 When one step of the program is run by pressing the top of the screen, this progresses one forwards, unhighlighting 0004 and highlighting 0008
 
-![Image](/testingImages/steps_2.png)
+![Highlighting change](/testingImages/steps_2.png)
 
 Using the step size option on the page correctly changes how far each step goes. When at setting of 1, it visually goes command by command. At setting 2, it visually skips a command each time. At 3, it looks like its going backwards in the 4-command loop of the default example program. And at 4 it visually stays in place while registers update for each loop.
 
@@ -237,27 +237,18 @@ Step size can only be a positive integer, if an invalid value is input, a popup 
 
 # Client Story Testing
 
-
-1) Memory Start
-
-
-2) Registers start
-
-
-3) emulator start
-
-
-4) emulation
-
-
-5) play/step
-
-
-6) limited instruction set 
-
+Each of these is demonstrated in the above examples
 
 # Lighthouse: 
 
+Testing with LightHouse results as follows : 
+![LightHouse Result](/testingImages/lighthouse.png)
+
+# Mobile window sizes
+
+Scaling window from desktop to phone 
+
+![Scaling](/testingImages/scaling.gif)
 
 # Deployment
 
@@ -284,10 +275,11 @@ To clone you will need a github account or other git client.
 5) set working directory to where you want to clone the repo.
 6) type `git clone` and paste the url from step 3 and press enter.
 
+## How to use the site
 
+This site uses the hexadecimal representation of powerPC assembler, so a tool such as [CodeWrite](https://github.com/TheGag96/CodeWrite) or a normal PPC compiler is required to write assembler that is in the correct form. 
 
 # Credits: 
-
 
 https://fail0verflow.com/media/files/ppc_750cl.pdf following this spec for each command (starts at page 353)
 
