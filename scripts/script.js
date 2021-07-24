@@ -558,7 +558,7 @@ class Computer {
         return true;
     }
 }
-function EXTS(val, originalSize) {
+function EXTS(val, originalSize) { //extends sign of a value with originalSize bits to a value with 32 bits  
     
     if(val>>(originalSize-1)) {
         let mask = ((1<<(32-originalSize))-1)<<originalSize
@@ -566,7 +566,7 @@ function EXTS(val, originalSize) {
     }
     return val
 }
-function stepCPU() {
+function stepCPU() { //tells the computer to step however many times the user specified until it halts.
     let steps = $(".stepCount").val()
     for(let i = 0; i < steps; i++) {
         if(!computer.halt){
@@ -576,9 +576,9 @@ function stepCPU() {
             break
         }
     }
-    refreshView(computer)
+    refreshView(computer) //after every step has been completed, refresh what the user sees
 }
-function restartCPU() {    
+function restartCPU() { //completely clear old computer replaced with new memory
     let code = readCode();
     computer = new Computer(code)
     readRegisters()
@@ -586,7 +586,7 @@ function restartCPU() {
     refreshView()
 }
 
-function readCode() {
+function readCode() { //reads input in 4 byte sections, ignoring everything in a line after a #
     let text = $("#input-side .hex").val()
     let lines = text.split("\n") 
     let code = []
@@ -616,7 +616,7 @@ function readRegisters() {
         }
     }
 }
-function initialiseTable() {
+function initialiseTable() { //creates the output table for the memory, setting each value to whatever is in memory for that point, with labels for position in memory.
     $("#output-side .hex .data").remove()
     let table = $("#output-side .hex") 
     for(let i = 0; i < computer.memory.getSize();) {
@@ -639,7 +639,7 @@ function initialiseTable() {
 
 
 }
-function refreshView() {
+function refreshView() { //refreshes everything the user can see
     var registers = $("#output-side .register")
     for(let i = 0; i < registers.length; i++) {
         $(registers[i]).val(computer.GPR[i])
@@ -652,7 +652,11 @@ function refreshView() {
         $(mem[i/4]).text((computer.memory.getWord(i)>>>0).toString(16).toUpperCase().padStart(8, "0"))
     }
 }
+
+//once everything is loaded, load the example program into the computer so something is there
 restartCPU()
+
+//add a limit to step value so it cant be outside the bounds of 1-999 and can only be an integer
 $(".stepCount").on("change", function() {
     let v = this.value
     if (v < this.min) {
